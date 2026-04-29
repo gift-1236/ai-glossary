@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI横文字・用語集 200選｜ichiko</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Meiryo',sans-serif;background:#f8f8f6;color:#222;padding:1rem}
+.top{text-align:center;padding:1.5rem 0 1rem;border-bottom:1px solid #e0e0da;margin-bottom:1rem}
+.top h1{font-size:18px;font-weight:700;margin-bottom:5px}
+.top p{font-size:12px;color:#888}
+.search-row{margin-bottom:0.75rem}
+.search-row input{width:100%;font-size:14px;padding:8px 12px;border:1px solid #ddd;border-radius:8px;outline:none}
+.search-row input:focus{border-color:#888}
+.tabs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:0.75rem}
+.tab{font-size:11px;padding:5px 11px;border-radius:20px;border:1px solid #ccc;background:#fff;cursor:pointer;color:#555;font-family:inherit}
+.tab.on{background:#222;color:#fff;border-color:#222;font-weight:700}
+.count-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.count{font-size:11px;color:#aaa}
+.add-btn{font-size:12px;padding:5px 14px;border-radius:20px;border:1.5px solid #222;background:#fff;cursor:pointer;color:#222;font-family:inherit;font-weight:700}
+.add-btn:hover{background:#222;color:#fff}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:16px;padding:1.5rem;width:90%;max-width:480px}
+.modal h2{font-size:16px;font-weight:700;margin-bottom:1rem}
+.modal label{font-size:12px;color:#666;display:block;margin-bottom:3px;margin-top:10px}
+.modal input,.modal select,.modal textarea{width:100%;font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;outline:none;font-family:inherit}
+.modal textarea{resize:vertical;min-height:70px}
+.modal-btns{display:flex;gap:8px;margin-top:1.25rem}
+.modal-btns button{flex:1;padding:9px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700}
+.btn-save{background:#222;color:#fff}
+.btn-cancel{background:#eee;color:#555}
+.sec-title{font-size:13px;font-weight:700;color:#555;margin:1.25rem 0 8px;padding-bottom:5px;border-bottom:1px solid #e0e0da}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.card{background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:12px 14px;position:relative}
+.card.user-card{border-color:#c8e6c9;background:#f9fff9}
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;display:inline-block;margin-bottom:6px}
+.b-basic{background:#e8f5e9;color:#2e7d32}
+.b-tool{background:#ede7f6;color:#4527a0}
+.b-tech{background:#fff8e1;color:#e65100}
+.b-image{background:#fce4ec;color:#880e4f}
+.b-video{background:#fbe9e7;color:#bf360c}
+.b-biz{background:#e3f2fd;color:#0d47a1}
+.b-ai{background:#f1f8e9;color:#33691e}
+.b-dev{background:#ffeee0;color:#a63a00}
+.b-sns{background:#fce4ff;color:#6a0080}
+.b-user{background:#e8f5e9;color:#1b5e20}
+.term{font-size:14px;font-weight:700;color:#111;line-height:1.3;margin-bottom:2px}
+.read{font-size:10px;color:#aaa;margin-bottom:6px}
+.desc{font-size:12px;color:#555;line-height:1.7}
+.del-btn{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-size:13px;color:#ccc}
+.del-btn:hover{color:#e57373}
+.empty{text-align:center;padding:3rem 0;color:#aaa;font-size:14px}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>AI横文字・用語集 200選</h1>
+  <p>カテゴリ別にまとめて解説｜ichiko</p>
+</div>
+<div class="search-row">
+  <input type="text" id="q" placeholder="用語を検索… 例：バイブコーディング、カルーセル、HTML" oninput="render()">
+</div>
+<div class="tabs">
+  <button class="tab on" onclick="setTab('all',this)">全部</button>
+  <button class="tab" onclick="setTab('basic',this)">基本</button>
+  <button class="tab" onclick="setTab('ai',this)">AIツール</button>
+  <button class="tab" onclick="setTab('image',this)">画像AI</button>
+  <button class="tab" onclick="setTab('video',this)">動画・音声</button>
+  <button class="tab" onclick="setTab('biz',this)">ビジネス活用</button>
+  <button class="tab" onclick="setTab('sns',this)">SNS・発信</button>
+  <button class="tab" onclick="setTab('tech',this)">技術系</button>
+  <button class="tab" onclick="setTab('tool',this)">機能・ツール名</button>
+  <button class="tab" onclick="setTab('dev',this)">開発・環境系</button>
+  <button class="tab" onclick="setTab('user',this)">✏️ 自分で追加</button>
+</div>
+<div class="count-row">
+  <span id="count" class="count"></span>
+  <button class="add-btn" onclick="openModal()">＋ 用語を追加する</button>
+</div>
+<div id="out"></div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2>✏️ 用語を追加する</h2>
+    <label>用語名（必須）</label>
+    <input type="text" id="in-term" placeholder="例：ダッシュボード">
+    <label>読み方</label>
+    <input type="text" id="in-read" placeholder="例：ダッシュボード">
+    <label>カテゴリ</label>
+    <select id="in-cat">
+      <option value="user">✏️ 自分で追加</option>
+      <option value="basic">基本</option>
+      <option value="ai">AIツール</option>
+      <option value="biz">ビジネス活用</option>
+      <option value="sns">SNS・発信</option>
+      <option value="tech">技術系</option>
+      <option value="tool">機能・ツール名</option>
+      <option value="dev">開発・環境系</option>
+    </select>
+    <label>解説（必須）</label>
+    <textarea id="in-desc" placeholder="わかりやすく一言で説明してね"></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">キャンセル</button>
+      <button class="btn-save" onclick="addWord()">追加する</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE=[
+  {t:"生成AI",r:"ジェネレーティブAI",c:"basic",d:"文章・画像・音声などを自分で作り出すAIのこと。今流行りのAIはほぼこれ。"},
+  {t:"プロンプト",r:"プロンプト",c:"basic",d:"AIへの指示文・お願い文のこと。入力するやつ全部がプロンプト。"},
+  {t:"プロンプトエンジニアリング",r:"プロンプトエンジニアリング",c:"basic",d:"AIへの指示文を上手に作る技術。AI使いこなし術とも言う。"},
+  {t:"マルチモーダル",r:"マルチモーダル",c:"basic",d:"テキスト・画像・音声など複数の種類の情報を扱えること。"},
+  {t:"モデル",r:"モデル",c:"basic",d:"AIの頭脳の設計図みたいなもの。GPT-5・Claude 4などのバージョン名と一緒に出てくる。"},
+  {t:"ハルシネーション",r:"ハルシネーション",c:"basic",d:"AIが事実と違うことを自信満々に答えてしまう現象。AI特有のウソ。重要情報は必ず確認を。"},
+  {t:"AIエージェント",r:"AIエージェント",c:"basic",d:"人間が指示しなくても自分で考えて行動するAI。複数の作業を自動でこなしてくれる。"},
+  {t:"チャットボット",r:"チャットボット",c:"basic",d:"自動で会話してくれるプログラム。今のAIチャットはこれが超進化したもの。"},
+  {t:"ノーコード",r:"ノーコード",c:"basic",d:"プログラムを書かなくてもアプリが作れる環境。"},
+  {t:"ローコード",r:"ローコード",c:"basic",d:"ほんの少しプログラムを書くだけでアプリが作れる環境。"},
+  {t:"オートメーション",r:"オートメーション",c:"basic",d:"繰り返し作業をAIに任せてしまうこと。"},
+  {t:"ワークフロー",r:"ワークフロー",c:"basic",d:"作業の流れや手順のこと。AIを組み込んだ業務フローのこと。"},
+  {t:"クラウド",r:"クラウド",c:"basic",d:"インターネット上にあるサーバーのこと。AIはクラウドで動くので自分のPCスペックは関係ない。"},
+  {t:"サブスクリプション",r:"サブスクリプション",c:"basic",d:"月額または年額で払う定額制。AIツールはほぼこの形式。"},
+  {t:"UI",r:"ユーアイ",c:"basic",d:"User Interfaceの略。画面のデザインや操作のしやすさのこと。"},
+  {t:"UX",r:"ユーエックス",c:"basic",d:"User Experienceの略。使っていて気持ちいい・便利と感じる体験全体。"},
+  {t:"システムプロンプト",r:"システムプロンプト",c:"basic",d:"AIに最初から設定しておく役割・ルールのこと。事前に性格や専門性を決めておける。"},
+  {t:"ペルソナ",r:"ペルソナ",c:"basic",d:"AIに演じさせるキャラクターや役割のこと。あなたは〇〇専門家ですと設定するやつ。"},
+  {t:"イテレーション",r:"イテレーション",c:"basic",d:"繰り返し改善すること。AIと何度もやり取りして出力をブラッシュアップする作業。"},
+  {t:"コンテキスト",r:"コンテキスト",c:"basic",d:"AIが会話の流れを覚えている範囲のこと。会話を続けるほどAIが前の内容を踏まえて答えてくれる。長い会話ほどコンテキストを多く使う。"},
+  {t:"レートリミット",r:"レートリミット",c:"basic",d:"一定時間内に使える回数の上限。無料プランでよく制限がかかる。"},
+  {t:"無料プラン",r:"むりょうプラン",c:"basic",d:"お金をかけずに使えるAIの基本プランのこと。機能や回数に制限がある。"},
+  {t:"有料プラン",r:"ゆうりょうプラン",c:"basic",d:"月額料金を払って高性能モデルや追加機能が使えるようになるプランのこと。"},
+  {t:"プロンプトテンプレート",r:"プロンプトテンプレート",c:"basic",d:"よく使うプロンプトをあらかじめ型にしておいたもの。"},
+  {t:"ナレッジワーカー",r:"ナレッジワーカー",c:"basic",d:"知識・情報を使って仕事をする人のこと。ライター・コンサル・クリエイターなど。AIと最も相性がいい職種とも言われる。"},
+  {t:"イニシアチブ",r:"イニシアチブ",c:"basic",d:"自分から率先して動くこと・主導権のこと。AIを使いこなす上で人間がイニシアチブをとることが大切。"},
+  {t:"セキュリティ",r:"セキュリティ",c:"basic",d:"AIに入力した情報が外部に漏れないよう守る仕組みのこと。機密情報の取り扱いに注意。"},
+  {t:"HTML",r:"エイチティーエムエル",c:"basic",d:"HyperText Markup Languageの略。WebページやArtifactsを作るための言語のこと。AIに「HTMLで作って」と頼むとWebページが作れる。"},
+  {t:"タブ",r:"タブ",c:"basic",d:"画面の切り替えボタンのこと。ブラウザの上のやつや、ウィジェット内のカテゴリ切り替えボタンもタブ。"},
+  {t:"ウィンドウ",r:"ウィンドウ",c:"basic",d:"画面上に開いているアプリや表示領域のこと。「別ウィンドウで開く」＝新しい画面が開くということ。"},
+  {t:"拡張パネル",r:"かくちょうパネル",c:"basic",d:"画面の横や下に追加で開く操作エリアのこと。ClaudeやChromeで設定・ツールが出てくる領域がこれ。"},
+  {t:"ChatGPT",r:"チャットGPT",c:"ai",d:"OpenAIが作った一番有名なAI。文章・画像・音声・データ分析など何でもできる万能タイプ。"},
+  {t:"Claude",r:"クロード",c:"ai",d:"Anthropicが作ったAI。文章力・長文処理・分析力が抜群。日本語もきれい。"},
+  {t:"Gemini",r:"ジェミニ",c:"ai",d:"Googleが作ったAI。GmailやGoogleドライブと連携できる。検索との相性バツグン。"},
+  {t:"Copilot",r:"コパイロット",c:"ai",d:"Microsoftが作ったAI。WordやExcelに組み込まれている。Office使いに便利。"},
+  {t:"Perplexity",r:"パープレキシティ",c:"ai",d:"調べ物に特化したAI検索エンジン。出典を一緒に見せてくれるから信頼性が高い。"},
+  {t:"Grok",r:"グロック",c:"ai",d:"イーロン・マスクのxAIが作ったAI。X（旧Twitter）のリアルタイムデータが強み。"},
+  {t:"DeepSeek",r:"ディープシーク",c:"ai",d:"中国発の生成AI。無料なのに高性能でコスパ最高。プログラミング学習が得意。"},
+  {t:"NotebookLM",r:"ノートブックLM",c:"ai",d:"GoogleのAI。PDFや文書を読み込ませて質問できる。勉強・資料整理に最高。"},
+  {t:"Llama",r:"ラマ",c:"ai",d:"Metaが開発したオープンソースのAIモデル。誰でも無料で使える。"},
+  {t:"Mistral",r:"ミストラル",c:"ai",d:"フランス発のAI。軽量で高性能と話題。ヨーロッパ産AIの代表格。"},
+  {t:"Midjourney",r:"ミッドジャーニー",c:"image",d:"テキストから高品質な画像を作るAI。クリエイター系で人気No.1。"},
+  {t:"DALL-E",r:"ダリ",c:"image",d:"OpenAIが作った画像生成AI。ChatGPTから直接使える。"},
+  {t:"Stable Diffusion",r:"ステーブルディフュージョン",c:"image",d:"無料で使えるオープンソースの画像生成AI。カスタマイズ性が高い。"},
+  {t:"Adobe Firefly",r:"アドビファイアフライ",c:"image",d:"Adobeが作った画像生成AI。商用利用しやすい設計になっている。"},
+  {t:"Ideogram",r:"アイデオグラム",c:"image",d:"文字入りの画像が得意なAI画像生成ツール。ロゴやポスター作成に強い。"},
+  {t:"LoRA",r:"ローラ",c:"image",d:"画像生成AIに特定のスタイルやキャラを追加学習させる技術のこと。"},
+  {t:"ControlNet",r:"コントロールネット",c:"image",d:"画像生成AIの構図や姿勢を細かくコントロールできる技術のこと。"},
+  {t:"txt2img",r:"テキストトゥーイメージ",c:"image",d:"テキストから画像を生成すること。プロンプトを入力して画像を作る基本の使い方。"},
+  {t:"Sora",r:"ソラ",c:"video",d:"OpenAIが作った動画生成AI。テキストから本格的な動画が作れる。"},
+  {t:"Runway",r:"ランウェイ",c:"video",d:"動画生成・編集に特化したAIツール。映像クリエイターに人気。"},
+  {t:"Kling",r:"クリング",c:"video",d:"中国発の動画生成AI。高品質な動画が無料プランでも作れると話題。"},
+  {t:"ElevenLabs",r:"イレブンラボ",c:"video",d:"リアルな音声を生成するAI。声優の声を再現したり多言語対応も得意。"},
+  {t:"Suno",r:"スノ",c:"video",d:"テキストから音楽を作るAI。歌詞を入力するだけで曲が完成する。"},
+  {t:"HeyGen",r:"ヘイジェン",c:"video",d:"AIアバターが動画を話してくれるツール。多言語対応で動画翻訳も得意。"},
+  {t:"Descript",r:"ディスクリプト",c:"video",d:"テキストを編集するだけで動画・音声編集ができるAIツール。"},
+  {t:"SEO",r:"エスイーオー",c:"biz",d:"Search Engine Optimizationの略。Google検索で上位に表示されるための対策。"},
+  {t:"コピーライティング",r:"コピーライティング",c:"biz",d:"人を動かす文章を書く技術のこと。AIに任せるとクオリティが上がる。"},
+  {t:"コンテンツマーケティング",r:"コンテンツマーケティング",c:"biz",d:"役立つ情報発信で見込み客を集めるマーケティング手法のこと。"},
+  {t:"エンゲージメント",r:"エンゲージメント",c:"biz",d:"SNSのいいね・コメント・シェアなど反応の総称。"},
+  {t:"ファネル",r:"ファネル",c:"biz",d:"認知→興味→検討→購入の購買プロセスのこと。"},
+  {t:"KPI",r:"ケーピーアイ",c:"biz",d:"Key Performance Indicatorの略。目標達成度を測る指標のこと。"},
+  {t:"ROI",r:"アールオーアイ",c:"biz",d:"投資対効果のこと。AIツール導入でどれだけ費用対効果があったかを見る指標。"},
+  {t:"DX",r:"ディーエックス",c:"biz",d:"デジタルトランスフォーメーションの略。AI・デジタル技術で仕事や生活を変革すること。"},
+  {t:"マネタイズ",r:"マネタイズ",c:"biz",d:"コンテンツやサービスをお金に変えること・収益化のこと。「ブログをマネタイズする」＝ブログで稼ぐ仕組みを作ること。"},
+  {t:"公式LPI",r:"こうしきLPI",c:"biz",d:"LINE公式アカウントのリッチメッセージやLINE系ツールの公式パートナー資格のこと。LINEを使ったビジネス活用の文脈でよく出てくる。"},
+  {t:"リスキリング",r:"リスキリング",c:"biz",d:"新しいスキルを身につけ直すこと。AI時代に求められるスキルを学ぶことを指す場合も多い。"},
+  {t:"データ分析",r:"データぶんせき",c:"biz",d:"AIに数字やデータを読み込ませて傾向や答えを出してもらうこと。"},
+  {t:"インプレッション",r:"インプレッション",c:"sns",d:"投稿が表示された回数のこと。いいねがなくても見られた回数がインプレッション。多いほど多くの人に届いている証拠。"},{t:"リーチ",r:"リーチ",c:"sns",d:"投稿を見たユニークな人数のこと。同じ人が2回見てもリーチは1。インプレッションとの違いはここ。"},{t:"バズる",r:"バズる",c:"sns",d:"投稿が爆発的に拡散されること。いいね・リポスト・引用が一気に増える状態。「バズった」＝大きく反応された。"},{t:"アルゴリズム",r:"アルゴリズム",c:"sns",d:"SNSが投稿を誰に見せるかを決める仕組みのこと。「アルゴリズムに乗る」＝多くの人におすすめされる状態。"},{t:"ハッシュタグ",r:"ハッシュタグ",c:"sns",d:"「#〇〇」の形で投稿につけるキーワードのこと。同じハッシュタグを検索した人に届きやすくなる。"},{t:"フィード",r:"フィード",c:"sns",d:"SNSを開いたときに表示される投稿一覧のこと。「フィードに流れてくる」＝タイムラインに表示されること。"},{t:"タイムライン",r:"タイムライン",c:"sns",d:"フォローしている人の投稿が時系列で並ぶ画面のこと。TLと略されることも多い。"},{t:"リポスト",r:"リポスト",c:"sns",d:"他の人の投稿を自分のフォロワーにも共有すること。X（旧Twitter）ではリツイート（RT）とも言う。"},{t:"引用投稿",r:"いんようとうこう",c:"sns",d:"他の人の投稿を引用しながら自分のコメントを添えて投稿すること。引用RTとも言う。"},{t:"フォロワー",r:"フォロワー",c:"sns",d:"自分のアカウントをフォローしている人のこと。フォロワーが多いほど投稿が届く範囲が広い。"},{t:"フォロー",r:"フォロー",c:"sns",d:"特定のアカウントの投稿を受け取る設定をすること。フォローすると相手の投稿がフィードに流れてくる。"},{t:"相互フォロー",r:"そうごフォロー",c:"sns",d:"お互いにフォローし合っている状態のこと。「相互」と略されることも多い。"},{t:"インフルエンサー",r:"インフルエンサー",c:"sns",d:"SNSで大きな影響力を持つ人のこと。フォロワーが多く投稿の反応も大きい。"},{t:"マイクロインフルエンサー",r:"マイクロインフルエンサー",c:"sns",d:"フォロワーが1,000〜10,000人程度の中規模インフルエンサーのこと。エンゲージメント率が高い傾向がある。"},{t:"プロフィール",r:"プロフィール",c:"sns",d:"SNSの自己紹介ページのこと。名前・アイコン・自己紹介文などが表示される。フォローするか判断される大事な場所。"},{t:"アイコン",r:"アイコン",c:"sns",d:"SNSのプロフィール画像のこと。投稿の左側に表示される小さな画像。第一印象を決める重要な要素。"},{t:"ヘッダー画像",r:"ヘッダーがぞう",c:"sns",d:"プロフィールページの上部に表示される横長の画像のこと。自分のブランドや世界観を伝える場所。"},{t:"固定ポスト",r:"こていポスト",c:"sns",d:"プロフィールページの一番上に固定表示できる投稿のこと。自己紹介や代表的な投稿を固定しておくと効果的。"},{t:"インサイト",r:"インサイト",c:"sns",d:"投稿のデータ分析画面のこと。インプレッション・リーチ・エンゲージメントなどの数字が確認できる。"},{t:"リール",r:"リール",c:"sns",d:"Instagramの短尺動画機能のこと。15秒〜90秒の縦型動画。アルゴリズムに乗りやすくバズりやすい。"},{t:"ストーリーズ",r:"ストーリーズ",c:"sns",d:"24時間で消えるInstagramの投稿形式のこと。気軽に投稿できて親近感が伝わりやすい。"},{t:"ハイライト",r:"ハイライト",c:"sns",d:"ストーリーズを保存してプロフィールに常時表示できる機能のこと。消えてほしくない投稿を残せる。"},{t:"DM",r:"ディーエム",c:"sns",d:"ダイレクトメッセージの略。SNS上で特定の相手だけに送れるメッセージのこと。"},{t:"メンション",r:"メンション",c:"sns",d:"「@ユーザー名」の形で特定の人を投稿内で呼びかけること。相手に通知が届く。"},{t:"ノーティフィケーション",r:"ノーティフィケーション",c:"sns",d:"通知のこと。いいね・リプライ・フォローなどがあったときにお知らせが来る機能。"},{t:"バイラル",r:"バイラル",c:"sns",d:"口コミのように拡散されること。「バイラルする」＝次々とシェアされて広まること。バズると似た意味。"},{t:"UGC",r:"ユージーシー",c:"sns",d:"User Generated Contentの略。ユーザーが作ったコンテンツのこと。フォロワーが投稿してくれた感想・レビューなどがこれ。"},{t:"CTA",r:"シーティーエー",c:"sns",d:"Call To Actionの略。投稿の最後に入れる行動を促す一言のこと。「保存してね」「フォローしてね」がCTA。"},{t:"ペルソナ（SNS用）",r:"ペルソナ",c:"sns",d:"投稿を届けたいターゲットの人物像のこと。「35歳・主婦・AI初心者」みたいに具体的に設定すると刺さる投稿が作れる。"},{t:"コンテンツカレンダー",r:"コンテンツカレンダー",c:"sns",d:"いつ・何を投稿するかをまとめたスケジュール表のこと。AIで作成すると効率的。"},{t:"予約投稿",r:"よやくとうこう",c:"sns",d:"あらかじめ投稿内容を作っておいて指定した時間に自動投稿する機能のこと。"},{t:"サムネイル",r:"サムネイル",c:"sns",d:"動画や記事の顔となる小さなプレビュー画像のこと。クリック率を左右する重要な要素。"},{t:"フック",r:"フック",c:"sns",d:"投稿の冒頭で読者の興味を引きつける一文のこと。「続きを読みたい」と思わせる導入部分。"},{t:"保存率",r:"ほぞんりつ",c:"sns",d:"投稿を見た人のうち保存した人の割合のこと。保存率が高い投稿はアルゴリズムに評価されやすい。"},{t:"クリック率（CTR）",r:"クリックりつ",c:"sns",d:"表示された回数に対してクリックされた割合のこと。リンクや画像をどれだけ押してもらえたかの指標。"},{t:"オーガニック",r:"オーガニック",c:"sns",d:"広告費を使わずに自然な形で集まったフォロワーや反応のこと。「オーガニックで伸びた」＝広告なしで拡散された。"},{t:"マネタイズ（SNS）",r:"マネタイズ",c:"sns",d:"SNSの発信活動をお金に変えること。note販売・Brain販売・アフィリエイト・コンサルなどの方法がある。"},{t:"ブランディング",r:"ブランディング",c:"sns",d:"自分やサービスのイメージを作り上げること。「この人といえば〇〇」という印象を育てること。"},{t:"世界観",r:"せかいかん",c:"sns",d:"投稿全体から伝わる独自の雰囲気・スタイルのこと。色・文体・テーマが統一されているアカウントは世界観がある。"},{t:"発信軸",r:"はっしんじく",c:"sns",d:"SNSで発信するテーマ・ジャンルのこと。「AI×主婦」「塗装×副業」など自分のポジションを決めること。"},{t:"ニッチ",r:"ニッチ",c:"sns",d:"特定の狭いターゲット・ジャンルのこと。「ニッチなテーマで発信する」＝競合が少ない専門分野で発信すること。"},{t:"差別化",r:"さべつか",c:"sns",d:"他のアカウントと違う独自の価値を出すこと。「なぜこのアカウントをフォローするか」の理由を作ること。"},{t:"カルーセル投稿",r:"カルーセルとうこう",c:"sns",d:"左右にスワイプして複数の画像や情報を見せる投稿形式のこと。InstagramやThreadsでよく見るやつ。保存率・エンゲージメントが高くなりやすい。"},
+  {t:"スクショ",r:"スクリーンショット",c:"sns",d:"画面を画像として保存すること。「スクショを撮る」＝画面キャプチャすること。SNSでは投稿の証拠保存や引用に使う。"},
+  {t:"ステップ（投稿構成）",r:"ステップ",c:"sns",d:"手順を番号で区切ったもの。「ステップ①〜③」のように書く投稿形式のこと。わかりやすく伝わりやすいのでSNS投稿で人気の構成。"},
+  {t:"キャプション",r:"キャプション",c:"sns",d:"SNSに投稿した画像や動画につける説明文のこと。InstagramやThreadsの本文テキスト部分がキャプション。"},
+  {t:"LLM",r:"エルエルエム",c:"tech",d:"Large Language Modelの略。大量の文章を学習させたAIの頭脳のこと。"},
+  {t:"RAG",r:"ラグ",c:"tech",d:"Retrieval-Augmented Generationの略。AIが外部データを参照しながら答える仕組み。"},
+  {t:"API",r:"エーピーアイ",c:"tech",d:"アプリやサービスをつなぐ接続口のこと。ChatGPTの機能を自分のアプリに組み込むときに使う。"},
+  {t:"ファインチューニング",r:"ファインチューニング",c:"tech",d:"既存のAIに追加でお勉強させること。自社用にカスタマイズする技術。"},
+  {t:"ディープラーニング",r:"ディープラーニング",c:"tech",d:"AIが人間の脳の仕組みを真似して学習する技術。生成AIの根っこにある技術。"},
+  {t:"自然言語処理（NLP）",r:"しぜんげんごしょり",c:"tech",d:"人間の言葉をAIが理解・生成する技術。"},
+  {t:"推論AI",r:"すいろんAI",c:"tech",d:"答える前にじっくり考えるモードのAI。難しい数学や複雑な問題に強い。"},
+  {t:"マルチエージェント",r:"マルチエージェント",c:"tech",d:"複数のAIが協力して作業をすること。"},
+  {t:"オープンソース",r:"オープンソース",c:"tech",d:"設計図（プログラム）を公開しているAIのこと。誰でも改造・活用できる。"},
+  {t:"ゼロショット",r:"ゼロショット",c:"tech",d:"例を一切見せずにAIに質問すること。普通にそのまま聞く使い方。"},
+  {t:"フューショット",r:"フューショット",c:"tech",d:"例を2〜3個見せてからAIに質問すること。こういう感じで書いてねと例を添える方法。"},
+  {t:"チェーンオブソート",r:"チェーンオブソート（CoT）",c:"tech",d:"AIに順を追って考えてと頼む方法。ステップバイステップで教えてがこれ。"},
+  {t:"パラメータ",r:"パラメータ",c:"tech",d:"AIの賢さを決める設定値のこと。数が多いほど高性能と言われる。"},
+  {t:"バイアス",r:"バイアス",c:"tech",d:"AIの学習データに偏りがあることで生まれる偏った回答のこと。"},
+  {t:"AGI",r:"エージーアイ",c:"tech",d:"Artificial General Intelligenceの略。人間並みの知能を持つ汎用AIのこと。まだ実現していない。"},
+  {t:"シンギュラリティ",r:"シンギュラリティ",c:"tech",d:"AIが人間の知能を超える技術的特異点のこと。"},
+  {t:"スキーム",r:"スキーム",c:"tech",d:"システムや仕組みの構造・設計図のこと。AIを組み込んだ全体の仕組みを指すときによく使われる。"},
+  {t:"温度（Temperature）",r:"おんど・テンペラチャー",c:"tech",d:"AIの回答のランダム性を調整する設定。高いほど創造的・低いほど正確な回答になる。"},
+  {t:"コンテキストウィンドウ",r:"コンテキストウィンドウ",c:"tech",d:"AIが一度に覚えられる会話や文書の量。大きいほど長い文書も処理できる。"},
+  {t:"トークン",r:"トークン",c:"tech",d:"AIが文章を処理するときの単位。日本語は1文字≒1〜2トークン。"},
+  {t:"バイブコーディング",r:"バイブコーディング",c:"tech",d:"プログラムの書き方を細かく指示せず「こんな感じで」というノリ・雰囲気（バイブ）でAIにコードを作らせること。2025年から広まった言葉。ノーコードとも違うAIまかせの新しいコーディングスタイル。"},
+  {t:"GPTs",r:"ジーピーティーズ",c:"tool",d:"ChatGPT上で作れるカスタムAIのこと。自分専用にカスタマイズしたChatGPT。"},
+  {t:"Gem",r:"ジェム",c:"tool",d:"GeminiのカスタムAI機能。GPTsのGemini版と思えばOK。"},
+  {t:"DeepResearch",r:"ディープリサーチ",c:"tool",d:"AIが自動で深くリサーチしてくれる機能。ChatGPTやGeminiなどに搭載。"},
+  {t:"Thinking mode",r:"シンキングモード",c:"tool",d:"AIがじっくり考えてから答えるモード。難しい問いかけをするときに使う。"},
+  {t:"ナレッジ",r:"ナレッジ",c:"tool",d:"AIに読み込ませる知識・情報のこと。GPTsやGemのナレッジに資料を登録すると賢くなる。"},
+  {t:"グローバルインストラクション",r:"グローバルインストラクション",c:"tool",d:"AIに対してすべての会話に共通して適用されるルール・設定のこと。一度設定すれば毎回反映される。"},
+  {t:"スラッシュコマンド",r:"スラッシュコマンド",c:"tool",d:"チャット画面で「/」を入力して使える便利なショートカット機能のこと。"},
+  {t:"Claude Cowork",r:"クロードコワーク",c:"tool",d:"Claudeのチーム協働ツールのこと。複数人でClaudeを使ったプロジェクト管理・タスク管理ができる。個人でも業務効率化に使える。"},{t:"トレンド",r:"トレンド",c:"sns",d:"今まさに流行っている話題・キーワードのこと。SNSで「トレンドに乗る」＝今バズっているネタで投稿すること。AIツールを使ってトレンドを調べて投稿に活かす人が増えている。"},{t:"Obsidian",r:"オブシディアン",c:"tool",d:"メモ・ノートを管理するアプリのこと。AIと連携して自分だけの知識データベースを作るツールとして人気。"},
+  {t:"Claude Projects",r:"クロードプロジェクト",c:"tool",d:"Claudeで特定のテーマ・役割を持つ専用チャット空間を作れる機能のこと。"},
+  {t:"Memory機能",r:"メモリきのう",c:"tool",d:"AIが過去の会話内容を覚えて次の会話に活かしてくれる機能のこと。"},
+  {t:"Artifacts",r:"アーティファクト",c:"tool",d:"ClaudeがHTML・コード・文書などを別ウィンドウで表示してくれる機能のこと。"},
+  {t:"Canvas機能",r:"キャンバスきのう",c:"tool",d:"ChatGPTやClaudeで文書やコードを横並びで編集できる機能のこと。"},
+  {t:"Web検索連携",r:"ウェブけんさくれんけい",c:"tool",d:"AIがリアルタイムでインターネットを検索して回答してくれる機能のこと。"},
+  {t:"Notion AI",r:"ノーションAI",c:"tool",d:"メモ・ドキュメント管理ツールNotionに搭載されたAI機能。文章生成・要約が得意。"},
+  {t:"Gamma",r:"ガンマ",c:"tool",d:"AIがスライド・プレゼン資料を自動で作ってくれるツールのこと。"},
+  {t:"Zapier",r:"ザピアー",c:"tool",d:"異なるアプリ同士をAIで自動連携させるツールのこと。"},
+  {t:"Make",r:"メイク",c:"tool",d:"Zapierと同じくアプリ間の自動化ツールのこと。日本でも人気が高まっている。"},
+  {t:"Dify",r:"ディファイ",c:"tool",d:"AIアプリをノーコードで作れるプラットフォームのこと。自分専用AIを簡単に作れる。"},
+  {t:"追加UI",r:"ついかユーアイ",c:"tool",d:"既存の画面やツールに後から追加された操作ボタン・パネル・入力欄のこと。「追加UIを実装する」＝新しい操作エリアを画面に付け加えること。"},
+  {t:"ターミナル",r:"ターミナル",c:"dev",d:"コンピュータに文字で命令を入力する黒い画面のこと。怖く見えるけどコマンドを打ち込む場所と覚えればOK。"},
+  {t:"GitHub",r:"ギットハブ",c:"dev",d:"プログラムのコードを保存・共有・管理するサービスのこと。プログラマーのDropboxみたいなもの。"},
+  {t:"プロジェクトディレクトリ",r:"プロジェクトディレクトリ",c:"dev",d:"プログラムやファイルをまとめて入れるフォルダのこと。ディレクトリ＝フォルダと覚えてOK。"},
+  {t:"Claude Code",r:"クロードコード",c:"dev",d:"Claudeのコーディング特化ツール。ターミナルから使えるAIプログラミング支援ツール。"},
+  {t:"MCP",r:"エムシーピー",c:"dev",d:"Model Context Protocolの略。AIとアプリをつなぐ共通の接続ルールのこと。"},
+  {t:"APIキー",r:"APIキー",c:"dev",d:"AIのAPIを使うためのパスワードのようなもの。大切に管理が必要。外部に漏らしてはいけない。"},
+  {t:"インストール",r:"インストール",c:"dev",d:"ソフトやツールをパソコンに入れること。AIツールを使い始めるときによく出てくる。"},
+  {t:"環境構築",r:"かんきょうこうちく",c:"dev",d:"プログラムやAIツールを動かすための準備をすること。最初の一番のハードルと言われがち。"},
+  {t:"ローカル環境",r:"ローカルかんきょう",c:"dev",d:"自分のパソコンの中だけで動かす環境のこと。クラウドの反対。"},
+  {t:"デプロイ",r:"デプロイ",c:"dev",d:"作ったアプリやAIツールをインターネット上に公開すること。リリースとほぼ同じ意味。"},
+  {t:"Python",r:"パイソン",c:"dev",d:"AIと最も相性がいいプログラミング言語のこと。AIツールを使う・作るときによく登場する。"},
+  {t:"エラー",r:"エラー",c:"dev",d:"プログラムやAIツールが正常に動かないときに表示されるメッセージ。エラー文をAIに貼り付けて解決策を聞くのが最速！"},
+  {t:"デバッグ",r:"デバッグ",c:"dev",d:"プログラムのエラーや不具合を見つけて直すこと。AIがデバッグを手伝ってくれる時代になった。"},
+  {t:"ログ",r:"ログ",c:"dev",d:"AIやシステムが動いた記録のこと。エラーが起きたときにログを見て原因を探る。"},
+  {t:"ダッシュボード",r:"ダッシュボード",c:"basic",d:"各種データや機能を一画面にまとめた管理画面のこと。SNSの管理画面やAIツールの操作画面がこれ。"},
+  {t:"ログイン",r:"ログイン",c:"basic",d:"IDとパスワードを入力してサービスにアクセスすること。サインインとも言う。"},
+  {t:"ログアウト",r:"ログアウト",c:"basic",d:"サービスからアクセスを終了すること。共用パソコンでは必ずログアウトが必要。"},
+  {t:"アカウント",r:"アカウント",c:"basic",d:"SNSやWebサービスの利用者登録のこと。IDとパスワードで管理される。"},
+  {t:"二段階認証",r:"にだんかいにんしょう",c:"basic",d:"パスワードに加えてSMSや認証アプリで本人確認をする仕組みのこと。セキュリティが大幅に向上する。"},
+  {t:"キャッシュ",r:"キャッシュ",c:"basic",d:"一度読み込んだデータを一時保存しておく仕組みのこと。「キャッシュをクリアする」＝一時データを削除すること。"},
+  {t:"ブラウザ",r:"ブラウザ",c:"basic",d:"WebサイトやAIツールを見るためのアプリのこと。Chrome・Edge・Safariなどが代表例。"},
+  {t:"URL",r:"ユーアールエル",c:"basic",d:"Webページのアドレスのこと。「https://〇〇」の形で表示される。リンクとも言う。"},
+  {t:"コピペ",r:"コピペ",c:"basic",d:"コピー＆ペーストの略。文字や画像をコピーして別の場所に貼り付けること。AIの回答をコピペして使うのが基本。"},
+  {t:"アップデート",r:"アップデート",c:"basic",d:"ソフトやアプリを最新版に更新すること。AIツールも頻繁にアップデートされて機能が増える。"},
+  {t:"テンプレート",r:"テンプレート",c:"basic",d:"あらかじめ決まった型・雛形のこと。テンプレに当てはめるだけで素早く文章や資料が作れる。"},
+  {t:"スプレッドシート",r:"スプレッドシート",c:"basic",d:"Googleが提供する無料の表計算ツールのこと。ExcelのGoogle版。AIと連携して自動化できる。"},
+  {t:"ドキュメント",r:"ドキュメント",c:"basic",d:"文書・書類のこと。GoogleドキュメントはWordのGoogle版。AIに文章を作らせてそのまま使える。"},
+  {t:"ダウンロード",r:"ダウンロード",c:"basic",d:"インターネット上のデータを自分のパソコンやスマホに保存すること。"},
+  {t:"アップロード",r:"アップロード",c:"basic",d:"自分のパソコンやスマホのデータをインターネット上に送ること。AIにファイルを読み込ませるときもこれ。"},
+  {t:"シェア",r:"シェア",c:"sns",d:"SNSで他の人の投稿を広める行為のこと。またはURLを知人に送ること。「シェアする」＝広める。"},
+  {t:"エゴサ",r:"エゴサーチ",c:"sns",d:"自分の名前やアカウント名をSNSや検索エンジンで調べること。「エゴサ」と略される。"},
+  {t:"鍵アカ",r:"かぎあか",c:"sns",d:"フォロワー以外には投稿が見えない非公開アカウントのこと。プライベート重視の人が使う。"},
+  {t:"RT",r:"アールティー",c:"sns",d:"リツイート・リポストの略。他の人の投稿を自分のフォロワーにも届けること。"},
+  {t:"いいね",r:"いいね",c:"sns",d:"投稿に対して好意的な反応をする機能のこと。ハートボタンを押すやつ。エンゲージメントの基本指標。"},
+  {t:"リプライ",r:"リプライ",c:"sns",d:"投稿に対して返信すること。「リプする」＝コメントを送ること。会話のきっかけになる。"},
+  {t:"スペース",r:"スペース",c:"sns",d:"X（旧Twitter）の音声配信機能のこと。リアルタイムで話せる。フォロワーとの距離を縮めるのに使われる。"},
+  {t:"ライブ配信",r:"ライブはいしん",c:"sns",d:"リアルタイムで動画を配信すること。InstagramライブやYouTubeライブなど。視聴者とリアルタイムで交流できる。"},
+  {t:"フォロワー比率",r:"フォロワーひりつ",c:"sns",d:"フォロー数に対してフォロワーがどれだけいるかの割合のこと。フォロワーがフォロー数より多いと信頼感が出る。"},
+  {t:"相互フォロー",r:"そうごフォロー",c:"sns",d:"お互いにフォローし合っている状態のこと。「相互」と略されることも多い。"},
+  {t:"垢バレ",r:"あかばれ",c:"sns",d:"匿名アカウントの本人が特定されること。副業アカウントを会社の人にバレたくない場合などに注意が必要。"},
+  {t:"インサイト",r:"インサイト",c:"sns",d:"投稿のデータ分析画面のこと。インプレッション・リーチ・エンゲージメントなどの数字が確認できる。"},
+  {t:"発信軸",r:"はっしんじく",c:"sns",d:"SNSで発信するテーマ・ジャンルのこと。「AI×主婦」「塗装×副業」など自分のポジションを決めること。"},
+  {t:"ブランディング",r:"ブランディング",c:"sns",d:"自分やサービスのイメージを作り上げること。「この人といえば〇〇」という印象を育てること。"},
+  {t:"バージョン管理",r:"バージョンかんり",c:"dev",d:"ファイルやプログラムの変更履歴を記録・管理すること。GitHubがこの役割を担う。"},
+];
+
+const CAT_LABEL={all:"全部",basic:"基本",ai:"AIツール",image:"画像AI",video:"動画・音声",biz:"ビジネス活用",sns:"SNS・発信",tech:"技術系",tool:"機能・ツール名",dev:"開発・環境系",user:"✏️ 自分で追加"};
+const CAT_ORDER=["basic","ai","image","video","biz","sns","tech","tool","dev","user"];
+let tab="all";
+let USER=[];
+try{USER=JSON.parse(localStorage.getItem("ai_glossary_user")||"[]");}catch(e){}
+
+function allData(){return[...BASE,...USER];}
+
+function setTab(t,el){
+  tab=t;
+  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("on"));
+  el.classList.add("on");
+  document.getElementById("q").value="";
+  render();
+}
+
+function render(){
+  const q=document.getElementById("q").value.toLowerCase();
+  const data=allData();
+  let items=data.filter(g=>{
+    if(tab!=="all"&&g.c!==tab)return false;
+    if(q&&!g.t.toLowerCase().includes(q)&&!g.r.includes(q)&&!g.d.includes(q))return false;
+    return true;
+  });
+  document.getElementById("count").textContent=items.length+"件";
+  if(!items.length){document.getElementById("out").innerHTML='<div class="empty">見つかりませんでした</div>';return;}
+  let html="";
+  if(tab==="all"&&!q){
+    CAT_ORDER.forEach(cat=>{
+      const grp=items.filter(g=>g.c===cat);
+      if(!grp.length)return;
+      html+=`<div class="sec-title">${CAT_LABEL[cat]}（${grp.length}件）</div><div class="grid">`;
+      html+=grp.map(g=>card(g)).join("");
+      html+="</div>";
+    });
+  }else{
+    html='<div class="grid">'+items.map(g=>card(g)).join("")+"</div>";
+  }
+  document.getElementById("out").innerHTML=html;
+}
+
+function card(g){
+  const isUser=USER.some(u=>u.t===g.t);
+  const del=isUser?`<button class="del-btn" onclick="deleteWord('${g.t.replace(/'/g,"\\'")}')">✕</button>`:"";
+  return`<div class="card${isUser?" user-card":""}">${del}<span class="badge b-${g.c}">${CAT_LABEL[g.c]}</span><div class="term">${g.t}</div><div class="read">${g.r}</div><div class="desc">${g.d}</div></div>`;
+}
+
+function openModal(){
+  document.getElementById("in-term").value="";
+  document.getElementById("in-read").value="";
+  document.getElementById("in-cat").value="user";
+  document.getElementById("in-desc").value="";
+  document.getElementById("modal").classList.add("show");
+  setTimeout(()=>document.getElementById("in-term").focus(),100);
+}
+function closeModal(){document.getElementById("modal").classList.remove("show");}
+
+function addWord(){
+  const t=document.getElementById("in-term").value.trim();
+  const r=document.getElementById("in-read").value.trim();
+  const c=document.getElementById("in-cat").value;
+  const d=document.getElementById("in-desc").value.trim();
+  if(!t||!d){alert("用語名と解説は必須だよ！");return;}
+  USER.push({t,r:r||t,c,d});
+  try{localStorage.setItem("ai_glossary_user",JSON.stringify(USER));}catch(e){}
+  closeModal();
+  render();
+}
+
+function deleteWord(term){
+  if(!confirm(`「${term}」を削除する？`))return;
+  USER=USER.filter(u=>u.t!==term);
+  try{localStorage.setItem("ai_glossary_user",JSON.stringify(USER));}catch(e){}
+  render();
+}
+
+document.getElementById("modal").addEventListener("click",function(e){if(e.target===this)closeModal();});
+render();
+</script>
+</body>
+</html>
