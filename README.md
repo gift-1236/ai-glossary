@@ -14,5 +14,12 @@ https://gift-1236.github.io/ai-glossary/画風辞典_all.html
 
 # 副業診断【完全version】
 
-あなたに合った副業がわかる診断アプリ
-https://gift-1236.github.io/ai-glossary/副業診断【完全version】.jsx
+あなたに合った副業がわかる診断アプリ（30問・12タイプ）
+https://gift-1236.github.io/ai-glossary/副業診断【完全version】.html
+
+---
+
+# 副業診断【簡易version】
+
+あなたに合った副業がわかる診断アプリ（簡易版）
+https://gift-1236.github.io/ai-glossary/副業診断【簡易version】.html
