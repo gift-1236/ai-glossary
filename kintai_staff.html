@@ -16,15 +16,11 @@
 body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;
   background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
 .app{max-width:420px;margin:0 auto;padding:0 0 60px}
-
-/* ヘッダー */
 .header{background:var(--accent);padding:20px 20px 16px;position:sticky;top:0;z-index:100}
 .header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .header-title{font-size:17px;font-weight:700;color:#fff;letter-spacing:0.04em}
 .header-name{font-size:13px;color:rgba(255,255,255,0.7)}
 .header-period{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px}
-
-/* セットアップ画面 */
 .setup{padding:24px 16px}
 .setup-card{background:var(--surface);border-radius:var(--radius);padding:28px 20px;text-align:center;border:0.5px solid var(--border)}
 .setup-icon{font-size:48px;margin-bottom:16px}
@@ -33,11 +29,9 @@ body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans
 .setup-input{width:100%;padding:14px 16px;border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:16px;text-align:center;font-family:inherit;outline:none;margin-bottom:12px}
 .setup-input:focus{border-color:var(--accent)}
 .btn-setup{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.05em}
-
-/* メイン */
 .main{padding:16px}
 .card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-.card-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+.card-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:0.1em;margin-bottom:12px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
 .field{margin-bottom:12px}.field:last-child{margin-bottom:0}
 .field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:600}
 input[type=text],input[type=date],select,textarea{
@@ -53,16 +47,11 @@ textarea{height:68px;resize:vertical}
 .time-label{font-size:12px;color:var(--text2);min-width:56px;font-weight:600}
 .time-input{flex:1;padding:11px 13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text);background:var(--surface);font-family:inherit;outline:none;transition:border-color 0.15s}
 .time-input:focus{border-color:var(--accent)}
-.hint{font-size:11px;color:var(--text2);margin-top:4px}
-
-/* ボタン */
 .btn-register{width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.05em;margin-bottom:10px;transition:opacity 0.15s}
 .btn-register:active{opacity:0.8}
 .btn-copy{width:100%;padding:15px;background:#1a5276;color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.05em;transition:opacity 0.15s}
 .btn-copy:active{opacity:0.8}
-
-/* 履歴 */
-.history-list{margin-top:4px}
+.grace-note{font-size:12px;color:var(--text2);text-align:center;margin-bottom:12px}
 .record{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:8px}
 .record-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .record-date{font-size:13px;font-weight:600}
@@ -73,9 +62,7 @@ textarea{height:68px;resize:vertical}
 .badge-off{background:var(--warn-bg);color:var(--warn-text)}
 .empty{text-align:center;padding:32px 0;color:var(--text2);font-size:13px}
 .count-bar{font-size:12px;color:var(--text2);margin-bottom:10px;padding:8px 12px;background:var(--bg);border-radius:var(--radius-sm)}
-
-/* モーダル */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:0}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;display:flex;align-items:flex-end;justify-content:center}
 .modal{background:#fff;border-radius:var(--radius) var(--radius) 0 0;padding:24px 20px;width:100%;max-width:420px}
 .modal-title{font-weight:700;font-size:16px;margin-bottom:6px}
 .modal-desc{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.7}
@@ -84,26 +71,22 @@ textarea{height:68px;resize:vertical}
 .modal-btns{display:flex;gap:8px}
 .btn-modal-copy{flex:1;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
 .btn-modal-close{padding:13px 18px;background:none;border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;color:var(--text);font-family:inherit}
-
-/* トースト */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:#fff;padding:12px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 <div class="app" id="app">
-  <!-- セットアップ画面 -->
   <div id="setup-screen" class="setup" style="display:none">
     <div class="setup-card">
       <div class="setup-icon">👷</div>
       <div class="setup-title">はじめに氏名を設定</div>
-      <div class="setup-desc">一度設定すると次回から自動で入力されます。<br>毎日の入力がラクになります！</div>
+      <div class="setup-desc">一度設定すると次回から自動で入力されます。</div>
       <input type="text" class="setup-input" id="setup-name" placeholder="例：山田 太郎" maxlength="20">
       <button class="btn-setup" onclick="setupName()">設定して始める</button>
     </div>
   </div>
 
-  <!-- メイン画面 -->
   <div id="main-screen" style="display:none">
     <div class="header">
       <div class="header-top">
@@ -114,23 +97,13 @@ textarea{height:68px;resize:vertical}
     </div>
 
     <div class="main">
-      <!-- 入力フォーム -->
       <div class="card">
         <div class="card-title">今日の勤務</div>
         <div class="row2">
-          <div class="field">
-            <label>日付</label>
-            <input type="date" id="date">
-          </div>
-          <div class="field">
-            <label>曜日</label>
-            <input type="text" id="weekday" readonly>
-          </div>
+          <div class="field"><label>日付</label><input type="date" id="date"></div>
+          <div class="field"><label>曜日</label><input type="text" id="weekday" readonly></div>
         </div>
-        <div class="field">
-          <label>現場名</label>
-          <input type="text" id="site" placeholder="〇〇工事現場">
-        </div>
+        <div class="field"><label>現場名</label><input type="text" id="site" placeholder="〇〇工事現場"></div>
         <div class="field">
           <label>勤務区分</label>
           <select id="work-type" onchange="toggleFields()">
@@ -173,12 +146,10 @@ textarea{height:68px;resize:vertical}
       </div>
 
       <button class="btn-register" onclick="saveRecord()">✓ 登録する</button>
-
-      <!-- 当月コピー -->
       <button class="btn-copy" onclick="openCopyModal()">📋 今月分をコピーしてLINEで送る</button>
+      <div class="grace-note" id="grace-note"></div>
 
-      <!-- 履歴 -->
-      <div class="card" style="margin-top:12px">
+      <div class="card" style="margin-top:4px">
         <div class="card-title">入力履歴（今月分）</div>
         <div id="history-container"></div>
       </div>
@@ -186,12 +157,11 @@ textarea{height:68px;resize:vertical}
   </div>
 </div>
 
-<!-- コピーモーダル -->
 <div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-title">📋 今月分をLINEで送る</div>
     <div class="modal-period" id="modal-period"></div>
-    <div class="modal-desc">下のテキストを全選択してコピーし、管理者にLINEで送ってください。</div>
+    <div class="modal-desc">下のテキストをコピーして管理者にLINEで送ってください。</div>
     <textarea class="modal-textarea" id="json-output" readonly></textarea>
     <div class="modal-btns">
       <button class="btn-modal-close" onclick="closeModal()">閉じる</button>
@@ -206,6 +176,7 @@ textarea{height:68px;resize:vertical}
 const DAYS=['日','月','火','水','木','金','土'];
 const KEY='kintai_staff_v1';
 const NAME_KEY='kintai_staff_name';
+const GRACE_DAYS=3; // 締め後の猶予日数
 
 function loadData(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}}
 function saveData(d){localStorage.setItem(KEY,JSON.stringify(d))}
@@ -213,45 +184,50 @@ function loadName(){return localStorage.getItem(NAME_KEY)||''}
 function saveName(n){localStorage.setItem(NAME_KEY,n)}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
 
-// 締め期間の計算（前月21日〜当月20日）
+// 締め期間：前月21日〜当月20日
 function getPeriod(){
   const now=new Date;
   const y=now.getFullYear(),m=now.getMonth(),d=now.getDate();
   let startY,startM,endY,endM;
-  if(d>=21){
+  // 猶予期間中（21〜23日）は前の締め期間を対象にする
+  if(d>=21+GRACE_DAYS+1){
+    // 新しい締め期間
     startY=y;startM=m;
     endY=(m===11)?y+1:y;endM=(m===11)?0:m+1;
+  }else if(d>=21){
+    // 猶予期間中：まだ前月締め期間が対象
+    startY=(m===0)?y-1:y;startM=(m===0)?11:m-1;
+    endY=y;endM=m;
   }else{
+    // 通常期間
     startY=(m===0)?y-1:y;startM=(m===0)?11:m-1;
     endY=y;endM=m;
   }
   const start=`${startY}-${String(startM+1).padStart(2,'0')}-21`;
   const end=`${endY}-${String(endM+1).padStart(2,'0')}-20`;
-  return{start,end};
+  // 猶予終了日
+  const endDate=new Date(end+'T00:00:00');
+  endDate.setDate(endDate.getDate()+GRACE_DAYS);
+  const grace=`${endDate.getFullYear()}-${String(endDate.getMonth()+1).padStart(2,'0')}-${String(endDate.getDate()).padStart(2,'0')}`;
+  return{start,end,grace};
 }
 
 function periodLabel(){
   const{start,end}=getPeriod();
-  const s=start.replace(/-/g,'/');
-  const e=end.replace(/-/g,'/');
-  return`${s} 〜 ${e}`;
-}
-
-function isInPeriod(date){
-  const{start,end}=getPeriod();
-  return date>=start&&date<=end;
+  return`${start.replace(/-/g,'/')} 〜 ${end.replace(/-/g,'/')}`;
 }
 
 function getMonthName(){
-  const now=new Date;
-  const d=now.getDate();
-  const m=d>=21?now.getMonth()+2:now.getMonth()+1;
-  const y=now.getFullYear();
-  const realM=m>12?1:m;
-  return`${y}年${realM}月分`;
+  const{end}=getPeriod();
+  const[y,m]=end.split('-');
+  return`${y}年${parseInt(m)}月分`;
 }
 
-// 初期化
+function isInPeriod(date){
+  const{start,grace}=getPeriod();
+  return date>=start&&date<=grace;
+}
+
 (function init(){
   const name=loadName();
   if(!name){
@@ -273,14 +249,15 @@ function startMain(name){
   document.getElementById('main-screen').style.display='block';
   document.getElementById('header-name').textContent=name;
   document.getElementById('header-period').textContent=periodLabel();
+  const{end,grace}=getPeriod();
+  document.getElementById('grace-note').textContent=`締め日：${end.replace(/-/g,'/')}　送信期限：${grace.replace(/-/g,'/')}`;
   initForm();
   renderHistory();
 }
 
 function initForm(){
   const d=new Date;
-  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
-  document.getElementById('date').value=`${y}-${m}-${dd}`;
+  document.getElementById('date').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   document.getElementById('weekday').value=DAYS[d.getDay()]+'曜日';
   document.getElementById('start').value='08:00';
   document.getElementById('end').value='17:00';
@@ -324,7 +301,11 @@ function saveRecord(){
   const date=document.getElementById('date').value;
   const name=loadName();
   if(!date){showToast('日付を入力してください');return}
-  if(!isInPeriod(date)){showToast('今月の締め期間外の日付です');return}
+  if(!isInPeriod(date)){
+    const{start,grace}=getPeriod();
+    showToast(`入力できる期間は ${start.replace(/-/g,'/')}〜${grace.replace(/-/g,'/')} です`);
+    return;
+  }
   const type=document.getElementById('work-type').value;
   const rec={
     id:Date.now(),name,site:document.getElementById('site').value.trim(),
@@ -344,7 +325,6 @@ function saveRecord(){
   document.getElementById('note').value='';
   document.getElementById('work-type').value='normal';
   toggleFields();
-  // 翌日に進める
   const d=new Date(date+'T00:00:00');d.setDate(d.getDate()+1);
   document.getElementById('date').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   document.getElementById('weekday').value=DAYS[d.getDay()]+'曜日';
@@ -380,10 +360,10 @@ function delRecord(id){
 }
 
 function openCopyModal(){
-  const{start,end}=getPeriod();
+  const{start,end,grace}=getPeriod();
   const data=loadData().filter(r=>r.date>=start&&r.date<=end).sort((a,b)=>a.date.localeCompare(b.date));
   if(!data.length){showToast('今月のデータがありません');return}
-  document.getElementById('modal-period').textContent=`📅 ${getMonthName()}：${periodLabel()}`;
+  document.getElementById('modal-period').textContent=`📅 ${getMonthName()}：${periodLabel()}　送信期限 ${grace.replace(/-/g,'/')}`;
   document.getElementById('json-output').value=JSON.stringify(data);
   document.getElementById('modal').style.display='flex';
 }
