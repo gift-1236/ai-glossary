@@ -26,7 +26,7 @@ https://gift-1236.github.io/ai-glossary/shindan-lite.html
 
 ---
 
-# 勤怠管理アプリ
+# 勤怠入力アプリ
 
-勤怠記録・Excelデータコピー機能付き勤怠管理アプリ
+スタッフ用勤怠入力アプリ
 https://gift-1236.github.io/ai-glossary/kintai_staff.html
