@@ -23,3 +23,10 @@ https://gift-1236.github.io/ai-glossary/shindan-full.html
 
 あなたに合った副業がわかる診断アプリ（簡易版）
 https://gift-1236.github.io/ai-glossary/shindan-lite.html
+
+---
+
+# 勤怠管理アプリ
+
+勤怠記録・Excelデータコピー機能付き勤怠管理アプリ
+https://gift-1236.github.io/ai-glossary/kintai.html
