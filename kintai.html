@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勤怠管理アプリ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f4f0;--surface:#fff;--border:#e0ddd6;
+  --text:#1a1a18;--text2:#6b6960;--accent:#2a2a28;
+  --danger:#c0392b;--warn-bg:#fef9ec;--warn-text:#92600a;
+  --info-bg:#eef4fb;--info-text:#1a4a7a;
+  --radius:12px;--radius-sm:8px;
+}
+body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
+.app{max-width:480px;margin:0 auto;padding:0 0 80px}
+.header{background:var(--accent);color:#fff;padding:16px 20px 0;position:sticky;top:0;z-index:100}
+.header-title{font-size:16px;font-weight:600;letter-spacing:0.05em;padding-bottom:12px}
+.tabs{display:flex}
+.tab{flex:1;padding:10px 0;text-align:center;font-size:13px;color:rgba(255,255,255,0.55);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s}
+.tab.active{color:#fff;border-bottom:2px solid #fff;font-weight:500}
+.section{display:none;padding:16px 16px 0}.section.active{display:block}
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:0.08em;margin-bottom:12px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+.field{margin-bottom:12px}.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
+input[type=text],input[type=date],input[type=month],select,textarea{
+  width:100%;padding:10px 12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);
+  font-size:14px;color:var(--text);background:var(--surface);font-family:inherit;
+  -webkit-appearance:none;appearance:none;outline:none;transition:border-color 0.15s}
+input:focus,select:focus,textarea:focus{border-color:#888}
+input[readonly]{background:#f8f7f4;color:var(--text2)}
+textarea{height:72px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.time-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.time-row:last-child{margin-bottom:0}
+.time-label{font-size:12px;color:var(--text2);min-width:60px;font-weight:500}
+.time-input{flex:1;padding:10px 12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text);background:var(--surface);font-family:inherit;outline:none;transition:border-color 0.15s}
+.time-input:focus{border-color:#888}
+.btn-register{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;letter-spacing:0.05em;margin-top:4px;transition:opacity 0.15s}
+.btn-register:active{opacity:0.8}
+.btn-outline{padding:9px 16px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;cursor:pointer;color:var(--text);font-family:inherit;transition:background 0.15s}
+.btn-outline:active{background:var(--bg)}
+.btn-copy{padding:9px 16px;background:#1a5276;color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;font-family:inherit;font-weight:500;transition:opacity 0.15s}
+.btn-copy:active{opacity:0.8}
+.btn-del{padding:6px 10px;background:none;border:0.5px solid #e8bbb7;border-radius:var(--radius-sm);font-size:12px;cursor:pointer;color:var(--danger);font-family:inherit}
+.filter-row{display:flex;gap:8px;margin-bottom:10px}
+.filter-row input{margin-bottom:0;flex:1}
+.btn-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.record{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px}
+.record-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.record-name{font-weight:600;font-size:14px}
+.record-date{font-size:12px;color:var(--text2)}
+.record-body{font-size:12px;color:var(--text2);line-height:1.7}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.badge-work{background:var(--info-bg);color:var(--info-text)}
+.badge-off{background:var(--warn-bg);color:var(--warn-text)}
+.empty{text-align:center;padding:48px 0;color:var(--text2);font-size:13px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.stat{background:var(--bg);border-radius:var(--radius-sm);padding:10px 12px}
+.stat-label{font-size:11px;color:var(--text2);margin-bottom:2px}
+.stat-value{font-size:19px;font-weight:600;color:var(--text)}
+.person-name{font-weight:600;font-size:15px;margin-bottom:10px}
+.total-row{font-size:12px;color:var(--text2);padding-top:8px;border-top:0.5px solid var(--border)}
+/* コピー用モーダル */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;border-radius:var(--radius);padding:20px;width:100%;max-width:440px}
+.modal-title{font-weight:600;font-size:15px;margin-bottom:8px}
+.modal-desc{font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.7}
+.modal-textarea{width:100%;height:140px;font-size:11px;font-family:monospace;padding:10px;border:0.5px solid var(--border);border-radius:var(--radius-sm);resize:none;color:var(--text)}
+.modal-btns{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:#fff;padding:11px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-title">⏱ 勤怠管理</div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('input')">入力</button>
+      <button class="tab" onclick="switchTab('list')">一覧</button>
+      <button class="tab" onclick="switchTab('summary')">集計</button>
+    </div>
+  </div>
+
+  <!-- 入力 -->
+  <div id="tab-input" class="section active">
+    <div class="card">
+      <div class="card-title">基本情報</div>
+      <div class="field"><label>氏名</label><input type="text" id="name" placeholder="山田 太郎"></div>
+      <div class="field"><label>現場名</label><input type="text" id="site" placeholder="〇〇工事現場"></div>
+      <div class="row2">
+        <div class="field"><label>日付</label><input type="date" id="date"></div>
+        <div class="field"><label>曜日</label><input type="text" id="weekday" readonly></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">勤務情報</div>
+      <div class="field">
+        <label>勤務区分</label>
+        <select id="work-type" onchange="toggleFields()">
+          <option value="normal">通常勤務</option>
+          <option value="overtime">残業あり</option>
+          <option value="night">深夜残業あり</option>
+          <option value="holiday">休日（有給・休暇等）</option>
+          <option value="absence">欠勤</option>
+        </select>
+      </div>
+      <div id="work-fields">
+        <div class="time-row"><span class="time-label">出勤</span><input class="time-input" type="text" id="start" maxlength="5" oninput="fmtTime(this)" placeholder="08:00"></div>
+        <div class="time-row"><span class="time-label">退勤</span><input class="time-input" type="text" id="end" maxlength="5" oninput="fmtTime(this)" placeholder="17:00"></div>
+        <div class="time-row"><span class="time-label">休憩</span><input class="time-input" type="text" id="break" maxlength="5" oninput="fmtTime(this)" placeholder="01:30"><span style="font-size:12px;color:var(--text2);margin-left:4px">時間</span></div>
+        <div id="ot-fields" style="display:none">
+          <div class="time-row" style="margin-top:10px"><span class="time-label">残業終了</span><input class="time-input" type="text" id="ot-end" maxlength="5" oninput="fmtTime(this)" placeholder="19:00"></div>
+        </div>
+        <div id="night-fields" style="display:none">
+          <div class="time-row" style="margin-top:10px"><span class="time-label">深夜開始</span><input class="time-input" type="text" id="night-start" maxlength="5" oninput="fmtTime(this)" placeholder="22:00"></div>
+          <div class="time-row"><span class="time-label">深夜終了</span><input class="time-input" type="text" id="night-end" maxlength="5" oninput="fmtTime(this)" placeholder="25:00"></div>
+        </div>
+      </div>
+      <div id="holiday-fields" style="display:none">
+        <div class="field">
+          <label>休暇種別</label>
+          <select id="holiday-type">
+            <option value="有給休暇">有給休暇</option>
+            <option value="特別休暇">特別休暇</option>
+            <option value="代休">代休</option>
+            <option value="振替休日">振替休日</option>
+            <option value="欠勤">欠勤</option>
+            <option value="その他">その他</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">備考</div>
+      <textarea id="note" placeholder="特記事項があれば記入"></textarea>
+    </div>
+    <button class="btn-register" onclick="saveRecord()">登録する</button>
+    <div style="height:8px"></div>
+  </div>
+
+  <!-- 一覧 -->
+  <div id="tab-list" class="section">
+    <div class="filter-row">
+      <input type="text" id="filter-name" placeholder="氏名で絞り込み" oninput="renderList()">
+      <input type="month" id="filter-month" oninput="renderList()">
+    </div>
+    <div class="btn-row">
+      <button class="btn-copy" onclick="openCopyModal()">📋 Excelデータをコピー</button>
+      <button class="btn-outline" onclick="exportCSV()">⬇ CSV出力</button>
+    </div>
+    <div id="list-container"></div>
+  </div>
+
+  <!-- 集計 -->
+  <div id="tab-summary" class="section">
+    <div class="filter-row">
+      <input type="text" id="sum-name" placeholder="氏名" oninput="renderSummary()">
+      <input type="month" id="sum-month" oninput="renderSummary()">
+    </div>
+    <div id="summary-container"></div>
+  </div>
+</div>
+
+<!-- コピーモーダル -->
+<div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title">📋 Excelデータのコピー</div>
+    <div class="modal-desc">
+      下のテキストを全選択してコピーし、<br>
+      Claudeのチャットに貼り付けて「Excelにして」と送ってください。<br>
+      人別シート＋集計行のきれいなExcelが出てきます！
+    </div>
+    <textarea class="modal-textarea" id="json-output" readonly></textarea>
+    <div class="modal-btns">
+      <button class="btn-outline" onclick="closeModal()">閉じる</button>
+      <button class="btn-copy" onclick="copyJson()">全選択してコピー</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DAYS=['日','月','火','水','木','金','土'];
+const KEY='kintai_records_v2';
+function loadData(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}}
+function saveData(d){localStorage.setItem(KEY,JSON.stringify(d))}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',['input','list','summary'][i]===name));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='list')renderList();
+  if(name==='summary')renderSummary();
+}
+
+(function init(){
+  const d=new Date;
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
+  document.getElementById('date').value=`${y}-${m}-${dd}`;
+  document.getElementById('weekday').value=DAYS[d.getDay()]+'曜日';
+  document.getElementById('filter-month').value=`${y}-${m}`;
+  document.getElementById('sum-month').value=`${y}-${m}`;
+  document.getElementById('start').value='08:00';
+  document.getElementById('end').value='17:00';
+  document.getElementById('break').value='01:30';
+})();
+
+document.getElementById('date').addEventListener('change',function(){
+  const d=new Date(this.value+'T00:00:00');
+  document.getElementById('weekday').value=DAYS[d.getDay()]+'曜日';
+});
+
+function fmtTime(el){
+  let v=el.value.replace(/[^0-9]/g,'');
+  if(v.length>=3)v=v.slice(0,2)+':'+v.slice(2,4);
+  el.value=v;
+}
+
+function toggleFields(){
+  const t=document.getElementById('work-type').value;
+  const isOff=t==='holiday'||t==='absence';
+  document.getElementById('work-fields').style.display=isOff?'none':'block';
+  document.getElementById('holiday-fields').style.display=isOff?'block':'none';
+  document.getElementById('ot-fields').style.display=t==='overtime'?'block':'none';
+  document.getElementById('night-fields').style.display=t==='night'?'block':'none';
+}
+
+function toMin(s){if(!s||!s.includes(':'))return 0;const[h,m]=s.split(':').map(Number);return(isNaN(h)||isNaN(m))?0:h*60+m}
+function fromMin(m){if(m<=0)return'0:00';return Math.floor(m/60)+':'+String(m%60).padStart(2,'0')}
+function calcH(r){
+  if(r.type==='holiday'||r.type==='absence')return{n:0,ot:0,night:0};
+  const s=toMin(r.start),e=toMin(r.end),br=toMin(r.break)||90;
+  let n=Math.max(0,e-s-br),ot=0,night=0;
+  if(r.type==='overtime'&&r.otEnd)ot=Math.max(0,toMin(r.otEnd)-e);
+  if(r.type==='night'&&r.nightStart&&r.nightEnd){night=Math.max(0,toMin(r.nightEnd)-toMin(r.nightStart));ot=Math.max(0,toMin(r.nightStart)-e);}
+  return{n,ot,night};
+}
+
+function saveRecord(){
+  const name=document.getElementById('name').value.trim();
+  const date=document.getElementById('date').value;
+  if(!name){showToast('氏名を入力してください');return}
+  if(!date){showToast('日付を入力してください');return}
+  const type=document.getElementById('work-type').value;
+  const rec={
+    id:Date.now(),name,site:document.getElementById('site').value.trim(),
+    date,weekday:document.getElementById('weekday').value,type,
+    start:document.getElementById('start').value,
+    end:document.getElementById('end').value,
+    break:document.getElementById('break').value,
+    otEnd:document.getElementById('ot-end').value,
+    nightStart:document.getElementById('night-start').value,
+    nightEnd:document.getElementById('night-end').value,
+    holidayType:document.getElementById('holiday-type').value,
+    note:document.getElementById('note').value.trim()
+  };
+  const data=loadData();data.push(rec);saveData(data);
+  showToast('登録しました！');
+  document.getElementById('note').value='';
+  const d=new Date(date+'T00:00:00');d.setDate(d.getDate()+1);
+  document.getElementById('date').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  document.getElementById('weekday').value=DAYS[d.getDay()]+'曜日';
+}
+
+function getFiltered(nameId,monthId){
+  const fn=document.getElementById(nameId).value.trim().toLowerCase();
+  const fm=document.getElementById(monthId).value;
+  let data=loadData();
+  if(fn)data=data.filter(r=>r.name.toLowerCase().includes(fn));
+  if(fm)data=data.filter(r=>r.date.startsWith(fm));
+  return data.sort((a,b)=>a.date.localeCompare(b.date));
+}
+
+function renderList(){
+  const data=getFiltered('filter-name','filter-month');
+  const el=document.getElementById('list-container');
+  if(!data.length){el.innerHTML='<div class="empty">データがありません</div>';return}
+  const tl={normal:'通常',overtime:'残業あり',night:'深夜残業あり',holiday:'休日',absence:'欠勤'};
+  el.innerHTML=data.map(r=>{
+    const h=calcH(r);const isOff=r.type==='holiday'||r.type==='absence';
+    return`<div class="record">
+      <div class="record-top">
+        <div><div class="record-name">${r.name}</div><div class="record-date">${r.date}（${r.weekday}）${r.site?'　📍'+r.site:''}</div></div>
+        <button class="btn-del" onclick="delRecord(${r.id})">削除</button>
+      </div>
+      <div class="record-body">
+        ${isOff?`<span class="badge badge-off">${r.holidayType}</span>`:`<span class="badge badge-work">${tl[r.type]||r.type}</span>　通常 ${fromMin(h.n)}h${h.ot?' 残業 '+fromMin(h.ot)+'h':''}${h.night?' 深夜 '+fromMin(h.night)+'h':''}`}
+        ${r.note?`<br>📝 ${r.note}`:''}
+      </div>
+    </div>`}).join('');
+}
+
+function delRecord(id){
+  if(!confirm('削除しますか？'))return;
+  saveData(loadData().filter(r=>r.id!==id));
+  renderList();showToast('削除しました');
+}
+
+function renderSummary(){
+  const data=getFiltered('sum-name','sum-month');
+  const el=document.getElementById('summary-container');
+  if(!data.length){el.innerHTML='<div class="empty">集計データがありません</div>';return}
+  const names=[...new Set(data.map(r=>r.name))];
+  el.innerHTML=names.map(name=>{
+    const rows=data.filter(r=>r.name===name);
+    let tn=0,tot=0,tnight=0,paid=0,special=0,absence=0;
+    rows.forEach(r=>{const h=calcH(r);tn+=h.n;tot+=h.ot;tnight+=h.night;
+      if(r.type==='holiday'){if(r.holidayType==='有給休暇')paid++;else if(r.holidayType==='欠勤')absence++;else special++;}
+      if(r.type==='absence')absence++;});
+    return`<div class="card">
+      <div class="person-name">${name}</div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">通常勤務</div><div class="stat-value">${fromMin(tn)}h</div></div>
+        <div class="stat"><div class="stat-label">残業</div><div class="stat-value">${fromMin(tot)}h</div></div>
+        <div class="stat"><div class="stat-label">深夜残業</div><div class="stat-value">${fromMin(tnight)}h</div></div>
+        <div class="stat"><div class="stat-label">有給 / 特休 / 欠勤</div><div class="stat-value">${paid} / ${special} / ${absence}日</div></div>
+      </div>
+      <div class="total-row">総労働：${fromMin(tn+tot+tnight)}h　／　${rows.length}件</div>
+    </div>`}).join('');
+}
+
+function exportCSV(){
+  const data=getFiltered('filter-name','filter-month');
+  if(!data.length){showToast('データがありません');return}
+  const header=['氏名','現場名','日付','曜日','区分','出勤','退勤','休憩時間','通常時間','残業時間','深夜時間','休暇種別','備考'];
+  const tl={normal:'通常',overtime:'残業あり',night:'深夜残業あり',holiday:'休日',absence:'欠勤'};
+  const rows=data.map(r=>{
+    const h=calcH(r);
+    return[r.name,r.site||'',r.date,r.weekday,tl[r.type]||r.type,
+      r.start||'',r.end||'',r.break||'',fromMin(h.n),fromMin(h.ot),fromMin(h.night),r.holidayType||'',r.note||''];
+  });
+  const bom='\uFEFF';
+  const csv=bom+[header,...rows].map(row=>row.map(v=>{const s=String(v);return(s.includes(',')||s.includes('"'))?'"'+s.replace(/"/g,'""')+'"':s}).join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=`勤怠_CSV.csv`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url)},100);
+  showToast('CSV出力しました！');
+}
+
+// コピーモーダル
+function openCopyModal(){
+  const data=getFiltered('filter-name','filter-month');
+  if(!data.length){showToast('データがありません');return}
+  document.getElementById('json-output').value=JSON.stringify(data);
+  document.getElementById('modal').style.display='flex';
+}
+function closeModal(){document.getElementById('modal').style.display='none'}
+function copyJson(){
+  const ta=document.getElementById('json-output');
+  ta.select();ta.setSelectionRange(0,99999);
+  try{
+    navigator.clipboard.writeText(ta.value).then(()=>showToast('コピーしました！あとはClaudeに貼るだけ！')).catch(()=>{document.execCommand('copy');showToast('コピーしました！')});
+  }catch{document.execCommand('copy');showToast('コピーしました！')}
+}
+</script>
+</body>
+</html>
