@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勤怠入力</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f3ef;--surface:#fff;--border:#e2dfd8;
+  --text:#1c1c1a;--text2:#72706a;--accent:#1e3a2f;
+  --accent2:#2d5a43;--danger:#b83232;
+  --warn-bg:#fef8ec;--warn-text:#8a5c0a;
+  --radius:14px;--radius-sm:9px;
+}
+body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;
+  background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
+.app{max-width:420px;margin:0 auto;padding:0 0 60px}
+.header{background:var(--accent);padding:20px 20px 16px;position:sticky;top:0;z-index:100}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.header-title{font-size:17px;font-weight:700;color:#fff;letter-spacing:0.04em}
+.header-name{font-size:13px;color:rgba(255,255,255,0.7)}
+.header-period{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px}
+.setup{padding:24px 16px}
+.setup-card{background:var(--surface);border-radius:var(--radius);padding:28px 20px;text-align:center;border:0.5px solid var(--border)}
+.setup-icon{font-size:48px;margin-bottom:16px}
+.setup-title{font-size:18px;font-weight:700;margin-bottom:8px}
+.setup-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px}
+.setup-input{width:100%;padding:14px 16px;border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:16px;text-align:center;font-family:inherit;outline:none;margin-bottom:12px}
+.setup-input:focus{border-color:var(--accent)}
+.btn-setup{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.05em}
+.main{padding:16px}
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.card-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:0.1em;margin-bottom:12px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+.field{margin-bottom:12px}.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:600}
+input[type=text],input[type=date],select,textarea{
+  width:100%;padding:11px 13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);
+  font-size:14px;color:var(--text);background:var(--surface);font-family:inherit;
+  -webkit-appearance:none;appearance:none;outline:none;transition:border-color 0.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+input[readonly]{background:#f8f7f4;color:var(--text2)}
+textarea{height:68px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.time-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.time-row:last-child{margin-bottom:0}
+.time-label{font-size:12px;color:var(--text2);min-width:56px;font-weight:600}
+.time-input{flex:1;padding:11px 13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text);background:var(--surface);font-family:inherit;outline:none;transition:border-color 0.15s}
+.time-input:focus{border-color:var(--accent)}
+.btn-register{width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.05em;margin-bottom:10px;transition:opacity 0.15s}
+.btn-register:active{opacity:0.8}
+.btn-copy{width:100%;padding:15px;background:#1a5276;color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.05em;transition:opacity 0.15s}
+.btn-copy:active{opacity:0.8}
+.grace-note{font-size:12px;color:var(--text2);text-align:center;margin-bottom:12px}
+.record{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:8px}
+.record-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.record-date{font-size:13px;font-weight:600}
+.record-body{font-size:12px;color:var(--text2);line-height:1.6}
+.btn-del{padding:4px 10px;background:none;border:0.5px solid #e8bbb7;border-radius:6px;font-size:11px;cursor:pointer;color:var(--danger);font-family:inherit}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
+.badge-work{background:#e8f4ee;color:#1e5c38}
+.badge-off{background:var(--warn-bg);color:var(--warn-text)}
+.empty{text-align:center;padding:32px 0;color:var(--text2);font-size:13px}
+.count-bar{font-size:12px;color:var(--text2);margin-bottom:10px;padding:8px 12px;background:var(--bg);border-radius:var(--radius-sm)}
+.record-weekend{background:#f7f9fc}
+.record-empty{opacity:0.65}
+.record-nodata{font-size:12px;color:#aaa}
+.day-sat{color:#1f4e79;font-weight:700}
+.day-sun{color:#c00000;font-weight:700}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:#fff;border-radius:var(--radius) var(--radius) 0 0;padding:24px 20px;width:100%;max-width:420px}
+.modal-title{font-weight:700;font-size:16px;margin-bottom:6px}
+.modal-desc{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.7}
+.modal-period{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:14px;padding:10px 14px;background:#e8f4ee;border-radius:var(--radius-sm)}
+.modal-textarea{width:100%;height:120px;font-size:11px;font-family:monospace;padding:10px;border:0.5px solid var(--border);border-radius:var(--radius-sm);resize:none;color:var(--text);margin-bottom:12px}
+.modal-btns{display:flex;gap:8px}
+.btn-modal-copy{flex:1;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-modal-close{padding:13px 18px;background:none;border:0.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;color:var(--text);font-family:inherit}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--accent);color:#fff;padding:12px 24px;border-radius:20px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div id="setup-screen" class="setup" style="display:none">
+    <div class="setup-card">
+      <div class="setup-icon">👷</div>
+      <div class="setup-title">はじめに氏名を設定</div>
+      <div class="setup-desc">一度設定すると次回から自動で入力されます。</div>
+      <input type="text" class="setup-input" id="setup-name" placeholder="例：山田 太郎" maxlength="20">
+      <button class="btn-setup" onclick="setupName()">設定して始める</button>
+    </div>
+  </div>
+
+  <div id="main-screen" style="display:none">
+    <div class="header">
+      <div class="header-top">
+        <div class="header-title">⏱ 勤怠入力</div>
+        <div class="header-name" id="header-name"></div>
+      </div>
+      <div class="header-period" id="header-period"></div>
+    </div>
+
+    <div class="main">
+      <div class="card">
+        <div class="card-title">今日の勤務</div>
+        <div class="row2">
+          <div class="field"><label>日付</label><input type="date" id="date"></div>
+          <div class="field"><label>曜日</label><input type="text" id="weekday" readonly></div>
+        </div>
+        <div class="field"><label>現場名</label><input type="text" id="site" placeholder="〇〇工事現場"></div>
+        <div class="field">
+          <label>勤務区分</label>
+          <select id="work-type" onchange="toggleFields()">
+            <option value="normal">通常勤務</option>
+            <option value="overtime">残業あり</option>
+            <option value="night">深夜残業あり</option>
+            <option value="holiday">休日（有給・休暇等）</option>
+            <option value="absence">欠勤</option>
+          </select>
+        </div>
+        <div id="work-fields">
+          <div class="time-row"><span class="time-label">出勤</span><input class="time-input" type="text" id="start" maxlength="5" oninput="fmtTime(this)"></div>
+          <div class="time-row"><span class="time-label">退勤</span><input class="time-input" type="text" id="end" maxlength="5" oninput="fmtTime(this)"></div>
+          <div class="time-row"><span class="time-label">休憩</span><input class="time-input" type="text" id="break" maxlength="5" oninput="fmtTime(this)"><span style="font-size:12px;color:var(--text2);margin-left:4px">時間</span></div>
+          <div id="ot-fields" style="display:none">
+            <div class="time-row" style="margin-top:8px"><span class="time-label">残業終了</span><input class="time-input" type="text" id="ot-end" maxlength="5" oninput="fmtTime(this)" placeholder="19:00"></div>
+          </div>
+          <div id="night-fields" style="display:none">
+            <div class="time-row" style="margin-top:8px"><span class="time-label">深夜開始</span><input class="time-input" type="text" id="night-start" maxlength="5" oninput="fmtTime(this)" placeholder="22:00"></div>
+            <div class="time-row"><span class="time-label">深夜終了</span><input class="time-input" type="text" id="night-end" maxlength="5" oninput="fmtTime(this)" placeholder="25:00"></div>
+          </div>
+        </div>
+        <div id="holiday-fields" style="display:none">
+          <div class="field">
+            <label>休暇種別</label>
+            <select id="holiday-type">
+              <option value="有給休暇">有給休暇</option>
+              <option value="特別休暇">特別休暇</option>
+              <option value="代休">代休</option>
+              <option value="振替休日">振替休日</option>
+              <option value="欠勤">欠勤</option>
+              <option value="その他">その他</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" style="margin-top:4px">
+          <label>備考</label>
+          <textarea id="note" placeholder="特記事項があれば"></textarea>
+        </div>
+      </div>
+
+      <button class="btn-register" onclick="saveRecord()">✓ 登録する</button>
+      <button class="btn-copy" onclick="openCopyModal()">📋 今月分をコピーしてLINEで送る</button>
+      <div class="grace-note" id="grace-note"></div>
+
+      <div class="card" style="margin-top:4px">
+        <div class="card-title">入力履歴（今月分）</div>
+        <div id="history-container"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title">📋 今月分をLINEで送る</div>
+    <div class="modal-period" id="modal-period"></div>
+    <div class="modal-desc">下のテキストをコピーして管理者にLINEで送ってください。</div>
+    <textarea class="modal-textarea" id="json-output" readonly></textarea>
+    <div class="modal-btns">
+      <button class="btn-modal-close" onclick="closeModal()">閉じる</button>
+      <button class="btn-modal-copy" onclick="copyJson()">コピーする</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DAYS=['日','月','火','水','木','金','土'];
+const KEY='kintai_staff_v1';
+const NAME_KEY='kintai_staff_name';
+const GRACE_DAYS=3; // 締め後の猶予日数
+
+function loadData(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}}
+function saveData(d){localStorage.setItem(KEY,JSON.stringify(d))}
+function loadName(){return localStorage.getItem(NAME_KEY)||''}
+function saveName(n){localStorage.setItem(NAME_KEY,n)}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
+
+// 締め期間：前月21日〜当月20日
+function getPeriod(){
+  const now=new Date;
+  const y=now.getFullYear(),m=now.getMonth(),d=now.getDate();
+  let startY,startM,endY,endM;
+  // 猶予期間中（21〜23日）は前の締め期間を対象にする
+  if(d>=21+GRACE_DAYS+1){
+    // 新しい締め期間
+    startY=y;startM=m;
+    endY=(m===11)?y+1:y;endM=(m===11)?0:m+1;
+  }else if(d>=21){
+    // 猶予期間中：まだ前月締め期間が対象
+    startY=(m===0)?y-1:y;startM=(m===0)?11:m-1;
+    endY=y;endM=m;
+  }else{
+    // 通常期間
+    startY=(m===0)?y-1:y;startM=(m===0)?11:m-1;
+    endY=y;endM=m;
+  }
+  const start=`${startY}-${String(startM+1).padStart(2,'0')}-21`;
+  const end=`${endY}-${String(endM+1).padStart(2,'0')}-20`;
+  // 猶予終了日
+  const endDate=new Date(end+'T00:00:00');
+  endDate.setDate(endDate.getDate()+GRACE_DAYS);
+  const grace=`${endDate.getFullYear()}-${String(endDate.getMonth()+1).padStart(2,'0')}-${String(endDate.getDate()).padStart(2,'0')}`;
+  return{start,end,grace};
+}
+
+function periodLabel(){
+  const{start,end}=getPeriod();
+  return`${start.replace(/-/g,'/')} 〜 ${end.replace(/-/g,'/')}`;
+}
+
+function getMonthName(){
+  const{end}=getPeriod();
+  const[y,m]=end.split('-');
+  return`${y}年${parseInt(m)}月分`;
+}
+
+function isInPeriod(date){
+  const{start,grace}=getPeriod();
+  return date>=start&&date<=grace;
+}
+
+(function init(){
+  const name=loadName();
+  if(!name){
+    document.getElementById('setup-screen').style.display='block';
+  }else{
+    startMain(name);
+  }
+})();
+
+function setupName(){
+  const name=document.getElementById('setup-name').value.trim();
+  if(!name){showToast('氏名を入力してください');return}
+  saveName(name);
+  document.getElementById('setup-screen').style.display='none';
+  startMain(name);
+}
+
+function startMain(name){
+  document.getElementById('main-screen').style.display='block';
+  document.getElementById('header-name').textContent=name;
+  document.getElementById('header-period').textContent=periodLabel();
+  const{end,grace}=getPeriod();
+  document.getElementById('grace-note').textContent=`締め日：${end.replace(/-/g,'/')}　送信期限：${grace.replace(/-/g,'/')}`;
+  initForm();
+  renderHistory();
+}
+
+function initForm(){
+  const d=new Date;
+  document.getElementById('date').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  document.getElementById('weekday').value=DAYS[d.getDay()]+'曜日';
+  document.getElementById('start').value='08:00';
+  document.getElementById('end').value='17:00';
+  document.getElementById('break').value='01:30';
+}
+
+document.addEventListener('change',function(e){
+  if(e.target.id==='date'){
+    const d=new Date(e.target.value+'T00:00:00');
+    document.getElementById('weekday').value=DAYS[d.getDay()]+'曜日';
+  }
+});
+
+function fmtTime(el){
+  let v=el.value.replace(/[^0-9]/g,'');
+  if(v.length>=3)v=v.slice(0,2)+':'+v.slice(2,4);
+  el.value=v;
+}
+
+function toggleFields(){
+  const t=document.getElementById('work-type').value;
+  const isOff=t==='holiday'||t==='absence';
+  document.getElementById('work-fields').style.display=isOff?'none':'block';
+  document.getElementById('holiday-fields').style.display=isOff?'block':'none';
+  document.getElementById('ot-fields').style.display=t==='overtime'?'block':'none';
+  document.getElementById('night-fields').style.display=t==='night'?'block':'none';
+}
+
+function toMin(s){if(!s||!s.includes(':'))return 0;const[h,m]=s.split(':').map(Number);return(isNaN(h)||isNaN(m))?0:h*60+m}
+function fromMin(m){if(m<=0)return'0:00';return Math.floor(m/60)+':'+String(m%60).padStart(2,'0')}
+function calcH(r){
+  if(r.type==='holiday'||r.type==='absence')return{n:0,ot:0,night:0};
+  const s=toMin(r.start),e=toMin(r.end),br=toMin(r.break)||90;
+  let n=Math.max(0,e-s-br),ot=0,night=0;
+  if(r.type==='overtime'&&r.otEnd)ot=Math.max(0,toMin(r.otEnd)-e);
+  if(r.type==='night'&&r.nightStart&&r.nightEnd){night=Math.max(0,toMin(r.nightEnd)-toMin(r.nightStart));ot=Math.max(0,toMin(r.nightStart)-e);}
+  return{n,ot,night};
+}
+
+function saveRecord(){
+  const date=document.getElementById('date').value;
+  const name=loadName();
+  if(!date){showToast('日付を入力してください');return}
+  if(!isInPeriod(date)){
+    const{start,grace}=getPeriod();
+    showToast(`入力できる期間は ${start.replace(/-/g,'/')}〜${grace.replace(/-/g,'/')} です`);
+    return;
+  }
+  const type=document.getElementById('work-type').value;
+  const rec={
+    id:Date.now(),name,site:document.getElementById('site').value.trim(),
+    date,weekday:document.getElementById('weekday').value,type,
+    start:document.getElementById('start').value,
+    end:document.getElementById('end').value,
+    break:document.getElementById('break').value,
+    otEnd:document.getElementById('ot-end').value,
+    nightStart:document.getElementById('night-start').value,
+    nightEnd:document.getElementById('night-end').value,
+    holidayType:(type==='holiday'||type==='absence')?document.getElementById('holiday-type').value:'',
+    note:document.getElementById('note').value.trim()
+  };
+  const data=loadData();data.push(rec);saveData(data);
+  showToast('登録しました！');
+  document.getElementById('site').value='';
+  document.getElementById('note').value='';
+  document.getElementById('work-type').value='normal';
+  toggleFields();
+  const d=new Date(date+'T00:00:00');d.setDate(d.getDate()+1);
+  document.getElementById('date').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  document.getElementById('weekday').value=DAYS[d.getDay()]+'曜日';
+  renderHistory();
+}
+
+function renderHistory(){
+  const{start,end}=getPeriod();
+  const allData=loadData().filter(r=>r.date>=start&&r.date<=end);
+  const byDate={};allData.forEach(r=>byDate[r.date]=r);
+  const inputCount=allData.length;
+  const el=document.getElementById('history-container');
+  const tl={normal:'通常',overtime:'残業あり',night:'深夜残業あり',holiday:'休日',absence:'欠勤'};
+
+  const days=[];
+  let cur=new Date(start+'T00:00:00');
+  const endD=new Date(end+'T00:00:00');
+  while(cur<=endD){days.push(new Date(cur));cur.setDate(cur.getDate()+1);}
+  days.reverse();
+
+  let html=`<div class="count-bar">今月 ${inputCount}件入力済み（${periodLabel()}）</div>`;
+  html+=days.map(d=>{
+    const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const wd=d.getDay();
+    const wdLabel=DAYS[wd];
+    const r=byDate[ds];
+    const isWeekend=(wd===0||wd===6);
+    const dayClass=wd===6?'day-sat':(wd===0?'day-sun':'');
+    if(r){
+      const h=calcH(r);const isOff=r.type==='holiday'||r.type==='absence';
+      return`<div class="record ${isWeekend?'record-weekend':''}">
+        <div class="record-top">
+          <span class="record-date"><span class="${dayClass}">${ds}（${wdLabel}）</span></span>
+          <button class="btn-del" onclick="delRecord(${r.id})">削除</button>
+        </div>
+        <div class="record-body">
+          ${r.site?'📍'+r.site+'　':''}
+          ${isOff?`<span class="badge badge-off">${r.holidayType}</span>`:`<span class="badge badge-work">${tl[r.type]}</span>　${fromMin(h.n)}h${h.ot?' 残業'+fromMin(h.ot)+'h':''}${h.night?' 深夜'+fromMin(h.night)+'h':''}`}
+          ${r.note?'<br>📝'+r.note:''}
+        </div>
+      </div>`;
+    }else{
+      return`<div class="record record-empty ${isWeekend?'record-weekend':''}">
+        <div class="record-top">
+          <span class="record-date"><span class="${dayClass}">${ds}（${wdLabel}）</span></span>
+        </div>
+        <div class="record-body record-nodata">未入力</div>
+      </div>`;
+    }
+  }).join('');
+  el.innerHTML=html;
+}
+
+function delRecord(id){
+  if(!confirm('削除しますか？'))return;
+  saveData(loadData().filter(r=>r.id!==id));
+  renderHistory();showToast('削除しました');
+}
+
+function openCopyModal(){
+  const{start,end,grace}=getPeriod();
+  const data=loadData().filter(r=>r.date>=start&&r.date<=end).sort((a,b)=>a.date.localeCompare(b.date));
+  if(!data.length){showToast('今月のデータがありません');return}
+  document.getElementById('modal-period').textContent=`📅 ${getMonthName()}：${periodLabel()}　送信期限 ${grace.replace(/-/g,'/')}`;
+  document.getElementById('json-output').value=JSON.stringify(data);
+  document.getElementById('modal').style.display='flex';
+}
+function closeModal(){document.getElementById('modal').style.display='none'}
+function copyJson(){
+  const ta=document.getElementById('json-output');
+  ta.select();ta.setSelectionRange(0,99999);
+  try{
+    navigator.clipboard.writeText(ta.value)
+      .then(()=>showToast('コピーしました！LINEで送ってください📤'))
+      .catch(()=>{document.execCommand('copy');showToast('コピーしました！LINEで送ってください📤')});
+  }catch{document.execCommand('copy');showToast('コピーしました！LINEで送ってください📤')}
+}
+</script>
+</body>
+</html>
