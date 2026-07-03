@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ぱんだQR｜リンクをかわいく着飾るQRコード作成ツール</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+  :root{
+    --bg:#FFF6F0;
+    --card:#FFFFFF;
+    --ink:#4A3B3B;
+    --sub:#9B8585;
+    --pink:#F48FB1;
+    --pink-deep:#E5679B;
+    --mint:#7ED8C3;
+    --cream:#FFE8D6;
+    --line:#F3DCD4;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:"Hiragino Maru Gothic ProN","BIZ UDGothic","Yu Gothic",sans-serif;
+    background:
+      radial-gradient(circle at 15% 20%, #FFE9F2 0 220px, transparent 220px),
+      radial-gradient(circle at 85% 80%, #E6FBF5 0 260px, transparent 260px),
+      var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:960px;margin:0 auto;}
+  header{text-align:center;margin-bottom:28px;}
+  .badge{display:inline-block;background:var(--ink);color:#fff;font-size:12px;padding:4px 14px;border-radius:999px;letter-spacing:.2em;margin-bottom:12px;}
+  h1{font-size:clamp(22px,4.5vw,34px);letter-spacing:.04em;}
+  h1 .hl{background:linear-gradient(transparent 60%, #FFD1E3 60%);padding:0 2px;}
+  header p{color:var(--sub);font-size:13px;margin-top:8px;line-height:1.8;}
+  .grid{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;align-items:start;}
+  @media(max-width:760px){.grid{grid-template-columns:1fr;}}
+  .card{background:var(--card);border:2px solid var(--line);border-radius:var(--radius);padding:20px;}
+  .preview-card{position:sticky;top:16px;text-align:center;}
+  #qrbox{
+    display:inline-block;padding:16px;border-radius:16px;
+    background:repeating-linear-gradient(45deg,#FFF5F9 0 10px,#fff 10px 20px);
+    border:2px dashed #F7C9DB;
+  }
+  #qrcanvas{display:block;border-radius:8px;max-width:100%;height:auto;}
+  .preview-label{margin-top:10px;color:var(--sub);font-size:12px;letter-spacing:.15em;}
+  label.field{display:block;font-size:13px;font-weight:bold;margin:14px 0 6px;}
+  label.field:first-child{margin-top:0;}
+  input[type=text],select{
+    width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;
+    font-size:14px;background:#FFFBF8;color:var(--ink);outline:none;
+  }
+  input[type=text]:focus,select:focus{border-color:var(--pink);}
+  input[type=color]{
+    width:44px;height:36px;border:2px solid var(--line);border-radius:10px;
+    background:#fff;padding:2px;cursor:pointer;
+  }
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{
+    padding:8px 14px;border-radius:999px;border:2px solid var(--line);
+    background:#fff;font-size:13px;cursor:pointer;transition:.15s;
+  }
+  .chip.on{background:var(--pink);border-color:var(--pink);color:#fff;font-weight:bold;}
+  .chip:hover{border-color:var(--pink);}
+  .emoji-chips .chip{font-size:18px;padding:6px 10px;}
+  .presets{display:flex;gap:8px;flex-wrap:wrap;}
+  .preset{
+    width:56px;height:36px;border-radius:10px;border:2px solid var(--line);cursor:pointer;
+    position:relative;overflow:hidden;
+  }
+  .preset span{position:absolute;inset:0;}
+  .preset:hover{transform:scale(1.06);}
+  .note{font-size:11px;color:var(--sub);margin-top:4px;line-height:1.6;}
+  .btn{
+    width:100%;margin-top:20px;padding:14px;border:none;border-radius:999px;
+    background:linear-gradient(90deg,var(--pink),var(--pink-deep));
+    color:#fff;font-size:16px;font-weight:bold;cursor:pointer;letter-spacing:.08em;
+    box-shadow:0 6px 0 #D9548B;transition:.1s;
+  }
+  .btn:active{transform:translateY(4px);box-shadow:0 2px 0 #D9548B;}
+  .svgbtn{
+    display:block;margin:12px auto 0;background:none;border:none;color:var(--sub);
+    font-size:12px;text-decoration:underline;cursor:pointer;
+  }
+  .foot{margin-top:26px;text-align:center;color:var(--sub);font-size:11px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">🐼 PANDA QR</div>
+    <h1>リンクも <span class="hl">かわいく</span> 着飾ろう</h1>
+    <p>インスタ・TikTok・名刺・クラスTシャツに。<br>色も形も自由自在。ぜんぶブラウザの中だけで完結する安心設計です。</p>
+  </header>
+
+  <div class="grid">
+    <div class="card preview-card">
+      <div id="qrbox"><canvas id="qrcanvas" width="1000" height="1000"></canvas></div>
+      <div class="preview-label">PREVIEW</div>
+      <button class="btn" id="savePng">💾 保存する（PNG）</button>
+      <button class="svgbtn" id="saveSvg">ベクター形式（SVG）で保存</button>
+    </div>
+
+    <div class="card">
+      <label class="field">🔗 どこに飛ばす？</label>
+      <input type="text" id="url" value="https://gift-1236.github.io/ai-glossary/" placeholder="https://...">
+
+      <label class="field">🎨 プリセット</label>
+      <div class="presets" id="presets"></div>
+
+      <label class="field">● ドットの色</label>
+      <div class="chips" id="colorMode">
+        <button class="chip on" data-v="solid">単色</button>
+        <button class="chip" data-v="gradient">グラデーション</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <span style="font-size:12px">Start</span><input type="color" id="c1" value="#E5679B">
+        <span style="font-size:12px" id="endLabel" hidden>End</span><input type="color" id="c2" value="#F8BBD0" hidden>
+        <select id="gradDir" hidden style="width:auto">
+          <option value="lr">→ 横</option>
+          <option value="tb">↓ 縦</option>
+          <option value="diag">↘ 斜め</option>
+          <option value="radial" selected>◎ 円形</option>
+        </select>
+      </div>
+
+      <label class="field">◆ ドットの形</label>
+      <div class="chips" id="dotShape">
+        <button class="chip on" data-v="square">四角</button>
+        <button class="chip" data-v="rounded">角丸</button>
+        <button class="chip" data-v="dot">まる</button>
+        <button class="chip" data-v="diamond">ダイヤ</button>
+      </div>
+
+      <label class="field">🐼 まんなかスタンプ</label>
+      <div class="chips emoji-chips" id="stamp">
+        <button class="chip on" data-v="">なし</button>
+        <button class="chip" data-v="🐼">🐼</button>
+        <button class="chip" data-v="☕">☕</button>
+        <button class="chip" data-v="💖">💖</button>
+        <button class="chip" data-v="✌️">✌️</button>
+        <button class="chip" data-v="🌸">🌸</button>
+        <button class="chip" data-v="⭐">⭐</button>
+        <button class="chip" data-v="🎀">🎀</button>
+      </div>
+
+      <label class="field">🖼️ 画像を入れる（ロゴ・アイコン）</label>
+      <div class="row">
+        <input type="file" id="imgFile" accept="image/*" style="font-size:12px">
+        <button class="chip" id="imgClear" hidden>画像を外す</button>
+      </div>
+      <div class="row" style="margin-top:8px" id="imgSizeRow" hidden>
+        <span style="font-size:12px">大きさ</span>
+        <input type="range" id="imgSize" min="14" max="26" value="20" style="flex:1">
+      </div>
+      <p class="note">画像を入れると絵文字スタンプは外れます。読み取りテストを忘れずに◎</p>
+
+      <label class="field">□ 背景色</label>
+      <div class="row">
+        <input type="color" id="bg" value="#FFFFFF">
+        <span class="note">※読み取り精度のため、薄い色を推奨</span>
+      </div>
+      <p class="note" style="margin-top:14px">誤り訂正レベルは自動で最強の「H（30%）」。スタンプを入れても読み取りやすい丈夫なコードになります。生成はすべてお使いのブラウザ内だけで行われ、URLはどこにも送信されません。</p>
+    </div>
+  </div>
+
+  <p class="foot">QR Code is a registered trademark of DENSO WAVE INCORPORATED.<br>🐼 made with Claude</p>
+</div>
+
+<script>
+const state={url:"https://gift-1236.github.io/ai-glossary/",mode:"solid",c1:"#E5679B",c2:"#F8BBD0",dir:"radial",shape:"square",stamp:"",bg:"#FFFFFF",img:null,imgData:"",imgPct:20};
+
+const PRESETS=[
+ {n:"いちごみるく",mode:"gradient",c1:"#E5679B",c2:"#FFC7DC",dir:"radial",shape:"dot",bg:"#FFF5F9"},
+ {n:"ゆめかわ",mode:"gradient",c1:"#B388EB",c2:"#8BD3F7",dir:"diag",shape:"rounded",bg:"#FFFFFF"},
+ {n:"ミント",mode:"gradient",c1:"#2BB39B",c2:"#A8F0DF",dir:"tb",shape:"dot",bg:"#F2FFFB"},
+ {n:"レトロ",mode:"solid",c1:"#B3541E",c2:"#B3541E",dir:"lr",shape:"square",bg:"#FFF3DC"},
+ {n:"ネオン",mode:"gradient",c1:"#FF2E9A",c2:"#3D5AFE",dir:"lr",shape:"diamond",bg:"#FFFFFF"},
+ {n:"モノトーン",mode:"solid",c1:"#333333",c2:"#333333",dir:"lr",shape:"rounded",bg:"#FFFFFF"},
+];
+
+const $=id=>document.getElementById(id);
+
+// presets UI
+const pbox=$("presets");
+PRESETS.forEach(p=>{
+  const b=document.createElement("button");
+  b.className="preset";b.title=p.n;
+  b.innerHTML=`<span style="background:linear-gradient(90deg,${p.c1},${p.c2})"></span>`;
+  b.onclick=()=>{Object.assign(state,{mode:p.mode,c1:p.c1,c2:p.c2,dir:p.dir,shape:p.shape,bg:p.bg});syncUI();render();};
+  pbox.appendChild(b);
+});
+
+function chipGroup(id,key){
+  $(id).addEventListener("click",e=>{
+    const b=e.target.closest(".chip");if(!b)return;
+    [...$(id).children].forEach(c=>c.classList.remove("on"));
+    b.classList.add("on");state[key]=b.dataset.v;
+    if(key==="mode")toggleGrad();
+    render();
+  });
+}
+chipGroup("colorMode","mode");chipGroup("dotShape","shape");chipGroup("stamp","stamp");
+
+// 絵文字を選んだら画像を外す
+$("stamp").addEventListener("click",e=>{
+  if(e.target.closest(".chip")&&e.target.closest(".chip").dataset.v!==""&&state.img)clearImg();
+});
+
+$("imgFile").addEventListener("change",e=>{
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=ev=>{
+    const im=new Image();
+    im.onload=()=>{
+      state.img=im;state.imgData=ev.target.result;
+      state.stamp="";
+      [...$("stamp").children].forEach(c=>c.classList.toggle("on",c.dataset.v===""));
+      $("imgClear").hidden=false;$("imgSizeRow").hidden=false;
+      render();
+    };
+    im.src=ev.target.result;
+  };
+  rd.readAsDataURL(f);
+});
+function clearImg(){
+  state.img=null;state.imgData="";
+  $("imgFile").value="";$("imgClear").hidden=true;$("imgSizeRow").hidden=true;
+  render();
+}
+$("imgClear").onclick=clearImg;
+$("imgSize").addEventListener("input",e=>{state.imgPct=+e.target.value;render();});
+
+function toggleGrad(){
+  const g=state.mode==="gradient";
+  $("c2").hidden=!g;$("endLabel").hidden=!g;$("gradDir").hidden=!g;
+}
+function syncUI(){
+  $("c1").value=state.c1;$("c2").value=state.c2;$("gradDir").value=state.dir;$("bg").value=state.bg;
+  [...$("colorMode").children].forEach(c=>c.classList.toggle("on",c.dataset.v===state.mode));
+  [...$("dotShape").children].forEach(c=>c.classList.toggle("on",c.dataset.v===state.shape));
+  toggleGrad();
+}
+$("url").addEventListener("input",e=>{state.url=e.target.value;render();});
+$("c1").addEventListener("input",e=>{state.c1=e.target.value;render();});
+$("c2").addEventListener("input",e=>{state.c2=e.target.value;render();});
+$("gradDir").addEventListener("change",e=>{state.dir=e.target.value;render();});
+$("bg").addEventListener("input",e=>{state.bg=e.target.value;render();});
+
+function makeMatrix(){
+  const qr=qrcode(0,"H");
+  qr.addData(state.url||" ");
+  qr.make();
+  return qr;
+}
+
+function fillStyleFor(ctx,size){
+  if(state.mode==="solid")return state.c1;
+  let g;
+  if(state.dir==="lr")g=ctx.createLinearGradient(0,0,size,0);
+  else if(state.dir==="tb")g=ctx.createLinearGradient(0,0,0,size);
+  else if(state.dir==="diag")g=ctx.createLinearGradient(0,0,size,size);
+  else g=ctx.createRadialGradient(size/2,size/2,size*0.05,size/2,size/2,size*0.7);
+  g.addColorStop(0,state.c1);g.addColorStop(1,state.c2);
+  return g;
+}
+
+function drawModule(ctx,x,y,s){
+  const pad=s*0.08;
+  switch(state.shape){
+    case "dot":
+      ctx.beginPath();ctx.arc(x+s/2,y+s/2,s/2-pad,0,Math.PI*2);ctx.fill();break;
+    case "rounded":
+      roundRect(ctx,x+pad,y+pad,s-pad*2,s-pad*2,s*0.3);ctx.fill();break;
+    case "diamond":
+      ctx.beginPath();ctx.moveTo(x+s/2,y+pad);ctx.lineTo(x+s-pad,y+s/2);
+      ctx.lineTo(x+s/2,y+s-pad);ctx.lineTo(x+pad,y+s/2);ctx.closePath();ctx.fill();break;
+    default:
+      ctx.fillRect(x,y,s,s);
+  }
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+
+function render(){
+  let qr;try{qr=makeMatrix();}catch(e){return;}
+  const n=qr.getModuleCount();
+  const size=1000,quiet=4,cell=size/(n+quiet*2);
+  const cv=$("qrcanvas"),ctx=cv.getContext("2d");
+  ctx.clearRect(0,0,size,size);
+  ctx.fillStyle=state.bg;ctx.fillRect(0,0,size,size);
+  ctx.fillStyle=fillStyleFor(ctx,size);
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++){
+    if(qr.isDark(r,c))drawModule(ctx,(c+quiet)*cell,(r+quiet)*cell,cell);
+  }
+  if(state.img){
+    const box=size*(state.imgPct/100);
+    const pad=box*0.08;
+    ctx.save();
+    ctx.fillStyle=state.bg;
+    roundRect(ctx,(size-box)/2,(size-box)/2,box,box,box*0.2);ctx.fill();
+    roundRect(ctx,(size-box)/2+pad,(size-box)/2+pad,box-pad*2,box-pad*2,box*0.15);
+    ctx.clip();
+    // 縦横比を保ったまま中央にフィット
+    const iw=state.img.width,ih=state.img.height;
+    const sc=Math.min((box-pad*2)/iw,(box-pad*2)/ih);
+    const dw=iw*sc,dh=ih*sc;
+    ctx.drawImage(state.img,(size-dw)/2,(size-dh)/2,dw,dh);
+    ctx.restore();
+  }else if(state.stamp){
+    const box=size*0.20;
+    ctx.save();
+    ctx.fillStyle=state.bg;
+    roundRect(ctx,(size-box)/2,(size-box)/2,box,box,box*0.25);ctx.fill();
+    ctx.font=`${box*0.72}px serif`;
+    ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText(state.stamp,size/2,size/2+box*0.04);
+    ctx.restore();
+  }
+}
+
+$("savePng").onclick=()=>{
+  const a=document.createElement("a");
+  a.download="panda-qr.png";
+  a.href=$("qrcanvas").toDataURL("image/png");
+  a.click();
+};
+
+$("saveSvg").onclick=()=>{
+  let qr;try{qr=makeMatrix();}catch(e){return;}
+  const n=qr.getModuleCount(),quiet=4,size=1000,cell=size/(n+quiet*2);
+  let defs="",fill;
+  if(state.mode==="solid"){fill=state.c1;}
+  else{
+    const coords={lr:'x1="0" y1="0" x2="1" y2="0"',tb:'x1="0" y1="0" x2="0" y2="1"',diag:'x1="0" y1="0" x2="1" y2="1"'};
+    if(state.dir==="radial"){
+      defs=`<radialGradient id="g" cx="0.5" cy="0.5" r="0.7"><stop offset="0" stop-color="${state.c1}"/><stop offset="1" stop-color="${state.c2}"/></radialGradient>`;
+    }else{
+      defs=`<linearGradient id="g" ${coords[state.dir]}><stop offset="0" stop-color="${state.c1}"/><stop offset="1" stop-color="${state.c2}"/></linearGradient>`;
+    }
+    fill="url(#g)";
+  }
+  let cells="";
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++){
+    if(!qr.isDark(r,c))continue;
+    const x=((c+quiet)*cell).toFixed(2),y=((r+quiet)*cell).toFixed(2),s=cell.toFixed(2),pad=(cell*0.08).toFixed(2);
+    if(state.shape==="dot")cells+=`<circle cx="${(+x+cell/2).toFixed(2)}" cy="${(+y+cell/2).toFixed(2)}" r="${(cell/2-cell*0.08).toFixed(2)}"/>`;
+    else if(state.shape==="rounded")cells+=`<rect x="${(+x+ +pad).toFixed(2)}" y="${(+y+ +pad).toFixed(2)}" width="${(cell-pad*2).toFixed(2)}" height="${(cell-pad*2).toFixed(2)}" rx="${(cell*0.3).toFixed(2)}"/>`;
+    else if(state.shape==="diamond")cells+=`<path d="M${(+x+cell/2).toFixed(2)} ${(+y+ +pad).toFixed(2)} L${(+x+cell-pad).toFixed(2)} ${(+y+cell/2).toFixed(2)} L${(+x+cell/2).toFixed(2)} ${(+y+cell-pad).toFixed(2)} L${(+x+ +pad).toFixed(2)} ${(+y+cell/2).toFixed(2)} Z"/>`;
+    else cells+=`<rect x="${x}" y="${y}" width="${s}" height="${s}"/>`;
+  }
+  let stamp="";
+  if(state.img){
+    const box=size*(state.imgPct/100),pad=box*0.08;
+    const iw=state.img.width,ih=state.img.height;
+    const sc=Math.min((box-pad*2)/iw,(box-pad*2)/ih);
+    const dw=iw*sc,dh=ih*sc;
+    stamp=`<rect x="${(size-box)/2}" y="${(size-box)/2}" width="${box}" height="${box}" rx="${box*0.2}" fill="${state.bg}"/><image x="${(size-dw)/2}" y="${(size-dh)/2}" width="${dw}" height="${dh}" href="${state.imgData}"/>`;
+  }else if(state.stamp){
+    const box=size*0.20;
+    stamp=`<rect x="${(size-box)/2}" y="${(size-box)/2}" width="${box}" height="${box}" rx="${box*0.25}" fill="${state.bg}"/><text x="${size/2}" y="${size/2}" font-size="${box*0.72}" text-anchor="middle" dominant-baseline="central">${state.stamp}</text>`;
+  }
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"><defs>${defs}</defs><rect width="${size}" height="${size}" fill="${state.bg}"/><g fill="${fill}">${cells}</g>${stamp}</svg>`;
+  const a=document.createElement("a");
+  a.download="panda-qr.svg";
+  a.href="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+  a.click();
+};
+
+syncUI();render();
+</script>
+</body>
+</html>
